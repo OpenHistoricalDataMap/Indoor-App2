@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="htw_berlin.de.mapmanager">
 
+    <!-- To store graph data on external storage, so that it is accessible from others -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- To read graph data from external storage-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -16,7 +21,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".DisplayPOIDetailActivity" />
-        <activity android:name=".ManagePOIConnectionsActivity"></activity>
+        <activity android:name=".ManagePOIConnectionsActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
