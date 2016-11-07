@@ -14,7 +14,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listPOI"
+        android:id="@+id/poiListView"
         android:layout_below="@id/textView1"
         android:layout_above="@+id/bottomBar"/>
 
@@ -36,13 +36,6 @@
             android:layout_height="wrap_content"
             android:text="New POI"
             android:onClick="newPOI"/>
-
-        <Button
-            android:id="@+id/poiDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(tmp) POI Detail"
-            android:onClick="poiDetail"/>
 
     </LinearLayout>
 
