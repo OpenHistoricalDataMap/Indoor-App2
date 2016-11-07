@@ -66,23 +66,28 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements View.On
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         Node node = getSelectedItem(buttonView);
+        System.out.println("buttonView.getId()" + buttonView.getId());
+        System.out.println("reachable" + R.id.cb_reachable);
 
         switch (buttonView.getId())
         {
-            case R.id.cb_barrierefrei:
+            case R.id.cb_reachable:
                 if(isChecked &! node.hasEdgeToNode(parentNode.id) &! parentNode.hasEdgeToNode(node.id)){
-                    node.removeEdgeToNode(parentNode.id);
-                    parentNode.removeEdgeToNode(node.id);
-                }
-                else if(!isChecked && node.hasEdgeToNode(parentNode.id) && parentNode.hasEdgeToNode(node.id)){
+                    System.out.println("Added");
                     int weight = 1;
                     node.addEdge(parentNode, weight);
                     parentNode.addEdge(node, weight);
                 }
+                else if(!isChecked && node.hasEdgeToNode(parentNode.id) && parentNode.hasEdgeToNode(node.id)){
+                    System.out.println("Removed");
+                    node.removeEdgeToNode(parentNode.id);
+                    parentNode.removeEdgeToNode(node.id);
+                }
                 break;
-            case R.id.cb_reachable:
-                throw new UnsupportedOperationException("TODO: implement");
-                //break;
+            case R.id.cb_barrierefrei:
+                System.out.println("TODO IMPLEMENT cb_barrierefrei WHEN CHECKBOX CHANGES");
+                //throw new UnsupportedOperationException("TODO: implement");
+                break;
             default:
 
                 break;
@@ -121,12 +126,18 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements View.On
 
         lastPosition = position;
 
+        viewHolder.poiName.setTag(position);
+        viewHolder.imageView.setTag(position);
+        viewHolder.cbReachable.setTag(position);
+        viewHolder.cbBarrierefrei.setTag(position);
+
         viewHolder.poiName.setText(MainActivity.graph.getNodeAsText(node));
         viewHolder.imageView.setImageResource(R.mipmap.ic_launcher); // TODO: get image from node
 
         Edge edgeToChild = parentNode.getEdgeToNode(node.id);
         boolean childReachable = edgeToChild != null;
         viewHolder.cbReachable.setChecked(childReachable);
+        viewHolder.cbReachable.setOnCheckedChangeListener(this);
 
         if(childReachable) // connection exists
             viewHolder.cbBarrierefrei.setChecked(edgeToChild.isBarrierefrei());
