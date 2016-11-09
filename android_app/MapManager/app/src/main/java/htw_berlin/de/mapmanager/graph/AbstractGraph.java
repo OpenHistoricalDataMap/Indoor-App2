@@ -5,6 +5,8 @@ import java.util.List;
 
 public abstract class AbstractGraph implements NonDirectionalGraph {
 	protected List<Node> nodes;
+    /** Used to assign a new incremental ID to the node*/
+    protected int lastNodeId;
 
 	@Override
 	public int nodesCount() {

@@ -1,7 +1,6 @@
 package htw_berlin.de.mapmanager.graph;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 

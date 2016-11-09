@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import htw_berlin.de.mapmanager.graph.Edge;
 import htw_berlin.de.mapmanager.graph.Node;
 
-public class ConnectionListAdapter extends ArrayAdapter<Node> implements View.OnClickListener, CompoundButton.OnCheckedChangeListener{
+public class ConnectionListAdapter extends ArrayAdapter<Node> implements CompoundButton.OnCheckedChangeListener{
 
     private final Node parentNode;
     private ArrayList<Node> dataSet;
@@ -35,32 +35,6 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements View.On
         this.parentNode = parentNode;
         this.dataSet = data;
 
-    }
-
-    // TODO: verify if useful
-    @Override
-    public void onClick(View v) {
-        int position=(Integer) v.getTag();
-        Node node=(Node)getItem(position);
-
-        switch (v.getId())
-        {
-            case R.id.listRowDetailsImage:
-
-                break;
-            case R.id.poiName:
-
-                break;
-            case R.id.cb_barrierefrei:
-
-                break;
-            case R.id.cb_reachable:
-
-                break;
-            default:
-
-                break;
-        }
     }
 
     @Override

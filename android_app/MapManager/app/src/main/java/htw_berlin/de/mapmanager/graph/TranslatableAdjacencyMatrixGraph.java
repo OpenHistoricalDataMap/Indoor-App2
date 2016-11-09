@@ -43,7 +43,39 @@ public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 				}
 			}
 		}
+	}
 
+    /**
+     * Adds and returns the node element
+     * @param nodeName
+     * @return the added node element
+     */
+	public Node addNewNode(String nodeName) {
+		lastNodeId++;
+        System.out.println("lastNodeId: " +lastNodeId);
+		Node newNode = new Node(lastNodeId);
+        properties.setProperty(String.valueOf(lastNodeId), nodeName);
+		this.nodes.add(newNode);
+        return newNode;
+	}
+
+    public void removeNode(Node node){
+        int nodeId = node.id;
+        // first remove from the id of the node from translation (naming) table
+        properties.remove(String.valueOf(nodeId));
+
+        // remove all the edges pointing at this node from all the nodes that will still exist
+        for(Edge edge : node.getEdges()){
+            Node existingNode = edge.getNode2();
+            existingNode.removeEdgeToNode(nodeId);
+        }
+
+        // actually remove the node from the node list
+        nodes.remove(node);
+    }
+
+	public Properties getProperties() {
+		return properties;
 	}
 
 	public void print(PrintStream out) {

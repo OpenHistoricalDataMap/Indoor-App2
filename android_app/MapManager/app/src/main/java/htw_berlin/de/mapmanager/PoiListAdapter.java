@@ -1,22 +1,21 @@
 package htw_berlin.de.mapmanager;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import htw_berlin.de.mapmanager.graph.Edge;
 import htw_berlin.de.mapmanager.graph.Node;
 
 public class PoiListAdapter extends ArrayAdapter<Node> {
 
-    private ArrayList<Node> dataSet;
+    private List<Node> dataSet;
     private int lastPosition = -1;
 
     private static final int LAYOUT_LIST_ITEM = R.layout.poi_list_item;
@@ -27,7 +26,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
         ImageView imageView;
     }
 
-    public PoiListAdapter(ArrayList<Node> data, Context context) {
+    public PoiListAdapter(List<Node> data, Context context) {
         super(context, LAYOUT_LIST_ITEM, data);
         this.dataSet = data;
 

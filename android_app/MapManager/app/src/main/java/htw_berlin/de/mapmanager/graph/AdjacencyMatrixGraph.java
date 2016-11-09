@@ -1,7 +1,6 @@
 package htw_berlin.de.mapmanager.graph;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,7 +21,11 @@ public class AdjacencyMatrixGraph extends AbstractGraph {
 			// Generate empty nodes
 			nodes = new ArrayList<>(firstRow.length - 1);
 			for (int i = 1; i < firstRow.length; i++) {
-				nodes.add(new Node(firstRow[i]));
+				int nodeId = firstRow[i];
+                if(nodeId > lastNodeId){
+                    lastNodeId = nodeId;
+                }
+				nodes.add(new Node(nodeId));
 			}
 
 			Node currentNode;
