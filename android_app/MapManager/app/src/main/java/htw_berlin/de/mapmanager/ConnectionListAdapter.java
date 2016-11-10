@@ -106,7 +106,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         viewHolder.cbBarrierefrei.setTag(position);
 
         viewHolder.poiName.setText(MainActivity.graph.getNodeAsText(node));
-        viewHolder.imageView.setImageResource(R.mipmap.ic_launcher); // TODO: get image from node
+        viewHolder.imageView.setImageResource(R.mipmap.ic_launcher); // TODO: get image from node's image folder
 
         Edge edgeToChild = parentNode.getEdgeToNode(node.id);
         boolean childReachable = edgeToChild != null;
