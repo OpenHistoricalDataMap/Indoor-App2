@@ -103,17 +103,19 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
                 // picture taken by camera will be stored as 1.jpg,2.jpg
                 // and likewise.
                 picturesCount++;
-                String file = dir+ picturesCount +".jpg";
-                File newfile = new File(file);
+
+                File newFile = PersistenceManager.getNodeImageFile(parentNode.id);
                 try {
-                    newfile.createNewFile();
+                    newFile.createNewFile();
                 }
                 catch (IOException e)
                 {
                     e.printStackTrace();
                 }
 
-                Uri outputFileUri = FileProvider.getUriForFile(ManagePOIConnectionsActivity.this, getApplicationContext().getPackageName() + ".provider", newfile);
+                Uri outputFileUri = FileProvider.getUriForFile(ManagePOIConnectionsActivity.this, getApplicationContext().getPackageName() + ".provider", newFile);
+                // alternative
+                //Uri outputFileUri = Uri.fromFile(newFile);
 
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);

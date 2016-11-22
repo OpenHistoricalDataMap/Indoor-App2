@@ -1,6 +1,7 @@
 package htw_berlin.de.mapmanager;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 
 import htw_berlin.de.mapmanager.graph.Node;
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class PoiListAdapter extends ArrayAdapter<Node> {
 
@@ -57,7 +59,18 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
         lastPosition = position;
 
         viewHolder.poiName.setText(MainActivity.graph.getNodeAsText(node));
-        viewHolder.imageView.setImageResource(R.mipmap.ic_launcher); // TODO: get image from node
+
+        // alternative
+        // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
+        File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
+        if(!nodeImageFile.exists()){
+            viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
+        }
+        else {
+            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
+            viewHolder.imageView.setImageURI(nodeImageUri);
+        }
+
 
         // Return the completed view to render on screen
         return convertView;

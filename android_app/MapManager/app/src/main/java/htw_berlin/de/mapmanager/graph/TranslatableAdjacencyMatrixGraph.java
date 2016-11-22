@@ -1,9 +1,13 @@
 package htw_berlin.de.mapmanager.graph;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.util.Properties;
+
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 	private InputStream propertiesInputStream;
@@ -19,6 +23,7 @@ public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 	public String getNodeAsText(Node n) {
 		return this.properties.getProperty(String.valueOf(n.id));
 	}
+
 
 	private void loadProperties() {
 

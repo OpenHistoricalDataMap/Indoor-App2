@@ -1,6 +1,7 @@
 package htw_berlin.de.mapmanager.persistence;
 
 
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ public class PersistenceManager {
 
     // Contains the albums for this app
     private static final String ALBUMS_FOLDER = "mapamanager_albums";
+    private static final String POI_PICTURE_NAME = "poi_picture.png";
     private static final String GRAPH_FOLDER = "graph";
     private static final String GRAPH_FILE_NAME = "places_net.txt";
     private static final String GRAPH_PROPERTIES_FILE_NAME = "places.properties";
@@ -34,6 +36,17 @@ public class PersistenceManager {
         this.permissionManager = permissionManager;
     }
 
+    /**
+     * Returns the File reference associated with the node's image. Does not check for file existence
+     * @param nodeId The id of the node
+     * @return File reference
+     */
+    public static File getNodeImageFile(int nodeId){
+        File folder = getAlbumStorageDir(String.format("Node_%d", nodeId));
+        File image = new File(folder, POI_PICTURE_NAME);
+        return image;
+    }
+
     // for the pics
     public static File getAlbumStorageDir(String albumName) {
         // Get the directory for the user's public pictures directory.
@@ -42,20 +55,25 @@ public class PersistenceManager {
                 Environment.DIRECTORY_PICTURES), ALBUMS_FOLDER);
         file = new File(file, albumName);
         if (!file.mkdirs()) {
-            Log.e(LOG_TAG, String.format("Directory %s not created", file.getAbsolutePath()));
+            Log.i(LOG_TAG, String.format("Directory %s structure MAY have not been completely created (possibly because it already existed)", file.getAbsolutePath()));
         }
         return file;
     }
     
     public File getGraphStorageDir(){
                 // Get the directory for the user's public documents directory.
-        // TODO: use internal directory for files, use DownloadManager to transfer this files to the Download folder on an "Export" action
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS), GRAPH_FOLDER);
         if (!file.mkdirs()) {
             Log.i(LOG_TAG, String.format("Directory %s structure MAY have not been completely created (possibly because it already existed)", file.getAbsolutePath()));
         }
         return file;
+    }
+
+
+    // TODO: use internal directory for files, use DownloadManager to transfer this files to the Download folder on an "Export" action
+    public void exportConfiguration(){
+
     }
 
     public boolean storeGraph(TranslatableAdjacencyMatrixGraph graph){
