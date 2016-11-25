@@ -3,12 +3,17 @@ package htw_berlin.de.mapmanager.persistence;
 
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
+import com.google.gson.stream.JsonReader;
+
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import htw_berlin.de.mapmanager.graph.Edge;
@@ -36,6 +41,7 @@ public class PersistenceManager {
         this.permissionManager = permissionManager;
     }
 
+
     /**
      * Returns the File reference associated with the node's image. Does not check for file existence
      * @param nodeId The id of the node
@@ -60,7 +66,7 @@ public class PersistenceManager {
         return file;
     }
     
-    public File getGraphStorageDir(){
+    public static File getGraphStorageDir(){
                 // Get the directory for the user's public documents directory.
         File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS), GRAPH_FOLDER);

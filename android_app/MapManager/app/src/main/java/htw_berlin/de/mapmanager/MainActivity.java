@@ -11,8 +11,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";
@@ -21,14 +30,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button newPoiButton;
     private ListView listView;
     private TextView poiNameTextView;
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadGraphData();
+        setTitle("Liste der POI");
+
+        //gsonTest();
+       loadGraphData();
         initGuiElements();
+    }
+
+    private void gsonTest() {
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("yyyy/MM/dd hh:mm a");
+        gson = gsonBuilder.create();
+
+
+        // create the 'gson' saveable graph
+        try {
+            JsonReader reader = new JsonReader(new FileReader(new File(PersistenceManager.getGraphStorageDir(), "json_graph.json")));
+
+            htw_berlin.de.mapmanager.graph.gson.TranslatableAdjacencyMatrixGraph gsonGraph = gson.fromJson(reader, htw_berlin.de.mapmanager.graph.gson.TranslatableAdjacencyMatrixGraph.class);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initGuiElements() {

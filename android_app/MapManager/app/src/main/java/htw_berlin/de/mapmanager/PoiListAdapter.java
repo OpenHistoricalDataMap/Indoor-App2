@@ -25,7 +25,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
     // View lookup cache
     private static class ViewHolder {
         TextView poiName;
-        ImageView imageView;
+        //ImageView imageView;
     }
 
     public PoiListAdapter(List<Node> data, Context context) {
@@ -49,7 +49,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
             convertView = inflater.inflate(LAYOUT_LIST_ITEM, parent, false);
 
             viewHolder.poiName = (TextView) convertView.findViewById(R.id.lv_textView);
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.lv_imageView);
+            //viewHolder.imageView = (ImageView) convertView.findViewById(R.id.lv_imageView);
 
             convertView.setTag(viewHolder);
         } else {
@@ -62,6 +62,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
 
         // alternative
         // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
+        /* OLD, image representation in list
         File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
         if(!nodeImageFile.exists()){
             viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
@@ -70,7 +71,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
             Uri nodeImageUri = Uri.fromFile(nodeImageFile);
             viewHolder.imageView.setImageURI(nodeImageUri);
         }
-
+        */
 
         // Return the completed view to render on screen
         return convertView;

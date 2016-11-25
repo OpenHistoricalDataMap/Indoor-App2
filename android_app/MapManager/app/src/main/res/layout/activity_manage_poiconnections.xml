@@ -1,18 +1,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/activity_manage_poiconnections"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:paddingBottom="@dimen/activity_vertical_margin"
-android:paddingLeft="@dimen/activity_horizontal_margin"
-android:paddingRight="@dimen/activity_horizontal_margin" android:orientation="horizontal"
-tools:activity="htw_berlin.de.mapmanager.ManagePOIConnectionsActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_manage_poiconnections"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:orientation="horizontal"
+    tools:activity="htw_berlin.de.mapmanager.ManagePOIConnectionsActivity">
+
+        <ImageView
+            android:id="@+id/currentPOIImage"
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_height="100pt" />
 
         <ListView
             android:id="@+id/connectionListView"
             android:layout_width="match_parent"
-            android:layout_alignParentTop="true"
+            android:layout_alignEnd="@id/currentPOIImage"
             android:layout_above="@+id/btnCapture"
+            android:layout_below="@id/currentPOIImage"
             android:layout_height="wrap_content" >
         </ListView>
         <Button

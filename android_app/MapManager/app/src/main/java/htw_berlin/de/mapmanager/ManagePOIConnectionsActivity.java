@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.io.File;
@@ -28,13 +29,13 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
 
     private Node parentNode;
     private static final int TAKE_PHOTO_CODE = 0;
-    private static int picturesCount = 0;
 
     // user defined, any code that is not used for any other permission request in this activity
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1;
     private ListView listView;
     private ConnectionListAdapter adapter;
     private Button capture;
+    private ImageView currentPOIImage;
 
     private PermissionManager permissionManager;
 
@@ -44,30 +45,44 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_poiconnections);
 
-
-        /*
-         * Get information about the connections
-         */
-
+        // Get information about the connections
         Intent intent = getIntent();
         int poiId = intent.getIntExtra(MainActivity.EXTRA_MESSAGE_POI_ID, -1);
         if(poiId == -1){
             throw new IllegalArgumentException("The given poiId is invalid: " + (-1));
         }
+
         this.parentNode = MainActivity.graph.getNodeById(poiId);
+        setTitle(MainActivity.graph.getNodeAsText(parentNode));
 
 
-        // TODO: get the ArrayList of images of the POI
 
         initPermissions();
+
+        // TODO: get the ArrayList of images of the POI
+        initImageView();
+
         initListView();
         initCamera();
+    }
+
+    private void initImageView() {
+        currentPOIImage = (ImageView) findViewById(R.id.currentPOIImage);
+        File nodeImageFile = PersistenceManager.getNodeImageFile(parentNode.id);
+        if(!nodeImageFile.exists()){
+            currentPOIImage.setImageResource(R.mipmap.ic_launcher);
+        }
+        else {
+            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
+            currentPOIImage.setImageURI(nodeImageUri);
+        }
     }
 
     private void initPermissions() {
         permissionManager = new PermissionManager(this);
         permissionManager.checkCameraPermissions();
         permissionManager.checkExternalWritePermissions();
+        permissionManager.checkExternalReadPermissions();
     }
 
 
@@ -99,20 +114,7 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
                     return;
                 }
 
-                // Here, the counter will be incremented each time, and the
-                // picture taken by camera will be stored as 1.jpg,2.jpg
-                // and likewise.
-                picturesCount++;
-
                 File newFile = PersistenceManager.getNodeImageFile(parentNode.id);
-                try {
-                    newFile.createNewFile();
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-
                 Uri outputFileUri = FileProvider.getUriForFile(ManagePOIConnectionsActivity.this, getApplicationContext().getPackageName() + ".provider", newFile);
                 // alternative
                 //Uri outputFileUri = Uri.fromFile(newFile);
@@ -123,6 +125,28 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
                 startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("WHAAAT?");
+        // Check which request we're responding to
+        if (requestCode == TAKE_PHOTO_CODE) {
+            Log.d(LOG_TAG, "Result: " + resultCode );
+            Log.d(LOG_TAG, "RESULT_OK" + RESULT_OK);
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                // Picture was taken
+                // refresh imageview
+                Log.d(LOG_TAG, "REFRESH PICTURE");
+                currentPOIImage.setImageURI(null);
+                currentPOIImage.setImageDrawable(null);
+                initImageView();
+            }
+            else {
+                // Picture was not taken
+            }
+        }
     }
 
 
