@@ -151,7 +151,7 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
     @Override
     public void onBackPressed() {
         // TODO: do you want to be able to cancel?
-        //askForSave();
+        askForSave();
     }
 
     /**

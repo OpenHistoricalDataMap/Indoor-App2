@@ -42,9 +42,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //todo delete all data button
 
         //gsonTest();
-       loadGraphData();
+        loadGraphData();
         initGuiElements();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // just redraw all the views (in particular the images) in case new pictures have been taken
+        // Attention: this does not update the adapter's listModel, it just redraws what is already available!
+        listView.invalidateViews();
+    }
+
 
     private void gsonTest() {
 

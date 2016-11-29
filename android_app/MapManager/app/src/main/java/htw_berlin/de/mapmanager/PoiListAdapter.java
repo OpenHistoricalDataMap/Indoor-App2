@@ -1,6 +1,8 @@
 package htw_berlin.de.mapmanager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +27,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
     // View lookup cache
     private static class ViewHolder {
         TextView poiName;
-        //ImageView imageView;
+        ImageView imageView;
     }
 
     public PoiListAdapter(List<Node> data, Context context) {
@@ -49,7 +51,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
             convertView = inflater.inflate(LAYOUT_LIST_ITEM, parent, false);
 
             viewHolder.poiName = (TextView) convertView.findViewById(R.id.lv_textView);
-            //viewHolder.imageView = (ImageView) convertView.findViewById(R.id.lv_imageView);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.lv_imageView);
 
             convertView.setTag(viewHolder);
         } else {
@@ -62,18 +64,28 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
 
         // alternative
         // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
-        /* OLD, image representation in list
+        //image representation in list
+
         File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
         if(!nodeImageFile.exists()){
             viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
         }
         else {
-            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
-            viewHolder.imageView.setImageURI(nodeImageUri);
+            /*
+            Note: do not use URIs, because with big pictures, all data will be loaded in background (really heavy)
+            while with this system we actually reduce the size of the image
+             */
+            Bitmap bitmap = loadLightweightBitmapFromFile(nodeImageFile);
+            viewHolder.imageView.setImageBitmap(bitmap);
         }
-        */
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    private Bitmap loadLightweightBitmapFromFile(File file){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        return BitmapFactory.decodeFile(file.getPath(),options);
     }
 }
