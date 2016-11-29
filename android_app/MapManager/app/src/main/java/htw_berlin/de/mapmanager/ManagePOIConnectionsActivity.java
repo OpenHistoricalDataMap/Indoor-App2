@@ -129,16 +129,12 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("WHAAAT?");
         // Check which request we're responding to
         if (requestCode == TAKE_PHOTO_CODE) {
-            Log.d(LOG_TAG, "Result: " + resultCode );
-            Log.d(LOG_TAG, "RESULT_OK" + RESULT_OK);
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 // Picture was taken
                 // refresh imageview
-                Log.d(LOG_TAG, "REFRESH PICTURE");
                 currentPOIImage.setImageURI(null);
                 currentPOIImage.setImageDrawable(null);
                 initImageView();
@@ -154,12 +150,12 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        // TODO: at the moment the changes are saved in the java graph object already when the checkboxes are changed (but stored in file just if pressed 'yes')
-        askForSave();
+        // TODO: do you want to be able to cancel?
+        //askForSave();
     }
 
     /**
-     * Exit the app if user select yes.
+     * Save to file if user presses yes
      */
 
     private void askForSave() {
@@ -185,8 +181,8 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
             }
         });
 
-        alertDialog.setMessage("Do you want to save the changes before exiting?");
-        alertDialog.setTitle("Save changes?");
+        alertDialog.setMessage("Do you want to save the changes to file before exiting?");
+        alertDialog.setTitle("Save changes to file?");
         alertDialog.show();
     }
 }

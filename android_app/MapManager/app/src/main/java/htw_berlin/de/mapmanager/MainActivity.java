@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setTitle("Liste der POI");
 
+        //todo delete all data button
+
         //gsonTest();
        loadGraphData();
         initGuiElements();
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else {
             showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name (minimum 1 non-special Character)");
         }
+        poiNameTextView.clearComposingText();
     }
 
     private void showSimpleAlert(String title, String message){
