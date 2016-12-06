@@ -78,13 +78,13 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
             Bitmap bitmap = loadLightweightBitmapFromFile(nodeImageFile);
             viewHolder.imageView.setImageBitmap(bitmap);
 
-            // load efficiently
+            // load efficiently (buggy)
             // http://stackoverflow.com/questions/20441644/java-lang-outofmemoryerror-bitmapfactory-decodestrpath
             // https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
-            if(bitmap != null){
-                bitmap.recycle();
-                bitmap = null;
-            }
+            //if(bitmap != null &! bitmap.isRecycled()){
+             //   bitmap.recycle();
+              //  bitmap = null;
+            //}
         }
 
         // Return the completed view to render on screen
