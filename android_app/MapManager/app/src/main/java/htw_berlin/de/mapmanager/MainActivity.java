@@ -92,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Called when the user clicks the new POI button */
     public void newPOI(View view){
         final String poiName = poiNameTextView.getText().toString();
-        if(poiName != null &! poiName.equalsIgnoreCase("")){
+        poiNameTextView.clearComposingText();
+        if(!poiName.equalsIgnoreCase("")){
            graph.addNewNode(poiName);
 
             // refresh gui
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else {
             showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name (minimum 1 non-special Character)");
         }
-        poiNameTextView.clearComposingText();
+
     }
 
     private void showSimpleAlert(String title, String message){
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /** Called when the user taps on a POI in the list */
     public void goToManageConnections(Node nodeSelected){
-        Intent intent = new Intent(this, ManagePOIConnectionsActivity.class);
+        Intent intent = new Intent(this, POIDetailsActivity.class);
         intent.putExtra(EXTRA_MESSAGE_POI_ID,  nodeSelected.id);
         startActivity(intent);
     }

@@ -7,27 +7,28 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:orientation="horizontal"
-    tools:activity="htw_berlin.de.mapmanager.ManagePOIConnectionsActivity">
+    tools:activity="htw_berlin.de.mapmanager.POIDetailsActivity">
 
         <ImageView
             android:id="@+id/currentPOIImage"
             android:layout_width="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_height="100pt" />
-
-        <ListView
-            android:id="@+id/connectionListView"
-            android:layout_width="match_parent"
-            android:layout_alignEnd="@id/currentPOIImage"
             android:layout_above="@+id/btnCapture"
-            android:layout_below="@id/currentPOIImage"
-            android:layout_height="wrap_content" >
-        </ListView>
+            android:layout_height="match_parent" />
+
         <Button
             android:id="@+id/btnCapture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Take new picture"
-            android:layout_alignParentBottom="true"
-            android:onClick="takePicture"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true" />
+
+        <Button
+            android:id="@+id/btnSetConnections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="Set Connections"
+            android:layout_alignParentBottom="true"/>
 </RelativeLayout>

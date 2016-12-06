@@ -16,25 +16,21 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
-public class ManagePOIConnectionsActivity extends AppCompatActivity{
+public class POIDetailsActivity extends AppCompatActivity{
 
-    private static final String LOG_TAG = "ManagePOIConnections";
+    private static final String LOG_TAG = "POIDetailsActivity";
 
     private Node parentNode;
     private static final int TAKE_PHOTO_CODE = 0;
 
-    // user defined, any code that is not used for any other permission request in this activity
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1;
-    private ListView listView;
-    private ConnectionListAdapter adapter;
     private Button capture;
+    private Button setConnections;
     private ImageView currentPOIImage;
 
     private PermissionManager permissionManager;
@@ -43,27 +39,39 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_poiconnections);
+        setContentView(R.layout.activity_poidetails);
 
-        // Get information about the connections
+        // Get information about the POI
         Intent intent = getIntent();
         int poiId = intent.getIntExtra(MainActivity.EXTRA_MESSAGE_POI_ID, -1);
         if(poiId == -1){
-            throw new IllegalArgumentException("The given poiId is invalid: " + (-1));
+            throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
         this.parentNode = MainActivity.graph.getNodeById(poiId);
         setTitle(MainActivity.graph.getNodeAsText(parentNode));
 
 
-
         initPermissions();
 
         // TODO: get the ArrayList of images of the POI
         initImageView();
-
-        initListView();
         initCamera();
+        initSetConnections();
+    }
+
+    private void initSetConnections() {
+        setConnections = (Button) findViewById(R.id.btnSetConnections);
+
+        final Intent intent = new Intent(this, POIConnectionsActivity.class);
+        intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.id);
+
+        setConnections.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
     }
 
     private void initImageView() {
@@ -86,17 +94,6 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
     }
 
 
-    private void initListView() {
-
-        listView = (ListView) findViewById(R.id.connectionListView);
-        ArrayList<Node> allOtherNodes = new ArrayList<>();
-        allOtherNodes.addAll(MainActivity.graph.getNodes());
-        allOtherNodes.remove(parentNode);
-        adapter = new ConnectionListAdapter(parentNode, allOtherNodes, this);
-        listView.setAdapter(adapter);
-
-    }
-
     private void initCamera() {
         // Here, we are making a folder named picFolder to store
         // pics taken by the camera using this application.
@@ -115,7 +112,7 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
                 }
 
                 File newFile = PersistenceManager.getNodeImageFile(parentNode.id);
-                Uri outputFileUri = FileProvider.getUriForFile(ManagePOIConnectionsActivity.this, getApplicationContext().getPackageName() + ".provider", newFile);
+                Uri outputFileUri = FileProvider.getUriForFile(POIDetailsActivity.this, getApplicationContext().getPackageName() + ".provider", newFile);
                 // alternative
                 //Uri outputFileUri = Uri.fromFile(newFile);
 
@@ -146,43 +143,4 @@ public class ManagePOIConnectionsActivity extends AppCompatActivity{
     }
 
 
-
-
-    @Override
-    public void onBackPressed() {
-        // TODO: do you want to be able to cancel?
-        askForSave();
-    }
-
-    /**
-     * Save to file if user presses yes
-     */
-
-    private void askForSave() {
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
-                ManagePOIConnectionsActivity.this);
-
-        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                PersistenceManager persistenceManager = new PersistenceManager(permissionManager);
-                persistenceManager.storeGraph(MainActivity.graph);
-                finish();
-            }
-        });
-
-        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        alertDialog.setMessage("Do you want to save the changes to file before exiting?");
-        alertDialog.setTitle("Save changes to file?");
-        alertDialog.show();
-    }
 }
