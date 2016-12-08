@@ -1,14 +1,16 @@
 package htw_berlin.de.mapmanager.graph.gson;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractGraph implements NonDirectionalGraph {
-    @SerializedName("nodes")
+	@SerializedName("nodes")
 	protected List<Node> nodes;
 
     /** Used to assign a new incremental ID to the node*/
+    @SerializedName("lastNodeId")
     protected int lastNodeId;
 
 	@Override
@@ -52,7 +54,7 @@ public abstract class AbstractGraph implements NonDirectionalGraph {
 	 * Gets the weight of the whole graph
 	 * */
 	public long getWeight() {
-
+		
 		long totalWeight = 0;
 		for (Node n : nodes)
 			for (Edge e : getEdges(n))
@@ -62,7 +64,7 @@ public abstract class AbstractGraph implements NonDirectionalGraph {
 
 	/**
 	 * Gets the shortest path to a node
-	 *
+	 * 
 	 * @return - empty ArrayList if the start node is equal the target node -
 	 *         null if there isn't such a path connecting the two nodes - list
 	 *         of edges that connect this two nodes in the shortest possible way

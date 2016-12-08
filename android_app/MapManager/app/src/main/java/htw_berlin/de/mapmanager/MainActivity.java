@@ -1,11 +1,14 @@
 package htw_berlin.de.mapmanager;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -16,11 +19,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
+import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
@@ -32,6 +38,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextView poiNameTextView;
     private Gson gson;
 
+    private PermissionManager permissionManager;
+    private PersistenceManager persistenceManager;
+
+    private static final String LOG_TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +50,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setTitle("Liste der POI");
 
-        //todo delete all data button
+        initPermissions();
+
+        //todo "delete all data" button
 
         //gsonTest();
-        loadGraphData();
+        try {
+            loadGraphData();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            // data not loaded, create a new graph
+            createNewGraph();
+        }
+
         initGuiElements();
     }
+
+    private void createNewGraph() {
+        graph = new TranslatableAdjacencyMatrixGraph();
+    }
+
+
+    private void initPermissions() {
+        permissionManager = new PermissionManager(this);
+        permissionManager.checkExternalReadPermissions();
+
+        persistenceManager = new PersistenceManager(permissionManager);
+    }
+
 
     @Override
     protected void onStart() {
@@ -92,16 +125,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Called when the user clicks the new POI button */
     public void newPOI(View view){
         final String poiName = poiNameTextView.getText().toString();
-        poiNameTextView.clearComposingText();
+        poiNameTextView.setText("");
         if(!poiName.equalsIgnoreCase("")){
-           graph.addNewNode(poiName);
+            graph.addNewNode(poiName);
 
+            // close the keyboard
+            View currentFocus = this.getCurrentFocus();
+            if (currentFocus != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
+            /*
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            if (poiNameTextView != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(poiNameTextView.getWindowToken(), 0);
+            }
+            */
             // refresh gui
             adapter.notifyDataSetChanged();
         }
         else {
             showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name (minimum 1 non-special Character)");
         }
+
 
     }
 
@@ -125,7 +175,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(intent);
     }
 
-    public void loadGraphData() {
+    private void loadGraphData() throws FileNotFoundException {
+        InputStream graphInputStream = new FileInputStream(persistenceManager.getGraphFile());
+        InputStream graphPropertiesInputStream = new FileInputStream(persistenceManager.getGraphPropertiesFile());
+
+        graph = new TranslatableAdjacencyMatrixGraph(graphInputStream, graphPropertiesInputStream);
+
+/* TAKE GRAPH FROM RAW FOLDER
         graph = new TranslatableAdjacencyMatrixGraph(
                 getResources().openRawResource(
                         getResources().getIdentifier("places_net",
@@ -133,8 +189,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 getResources().openRawResource(
                         getResources().getIdentifier("places",
                                 "raw", getPackageName())));
+                                */
 
     }
+
+
 
     /**
      * android:clickable="false" attribute in containing Layout tag in the layout/list_item.xml is

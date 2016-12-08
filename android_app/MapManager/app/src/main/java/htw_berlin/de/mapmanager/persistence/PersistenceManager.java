@@ -1,19 +1,13 @@
 package htw_berlin.de.mapmanager.persistence;
 
 
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.Properties;
 
 import htw_berlin.de.mapmanager.graph.Edge;
@@ -99,7 +93,7 @@ public class PersistenceManager {
             // TODO: probably should not continue writing if storage is not writable
         }
 
-        final File graphFile = new File(getGraphStorageDir(), GRAPH_FILE_NAME);
+        final File graphFile = getGraphFile();
         /* TODO possibly just simply throw an IOException (or a custom exception) so that the activity can handle it as necessary (e.g. ask the user to try save again the file)
          */
         graphFile.delete();
@@ -143,7 +137,7 @@ public class PersistenceManager {
         }
 
 
-        final File graphPropertiesFile = new File(getGraphStorageDir(), GRAPH_PROPERTIES_FILE_NAME);
+        final File graphPropertiesFile = getGraphPropertiesFile();
         graphPropertiesFile.delete();
         if(!graphPropertiesFile.exists()){
             try {
@@ -165,6 +159,13 @@ public class PersistenceManager {
         return !errorOccured;
     }
 
+    public File getGraphPropertiesFile() {
+        return new File(getGraphStorageDir(), GRAPH_PROPERTIES_FILE_NAME);
+    }
+
+    public File getGraphFile() {
+        return new File(getGraphStorageDir(), GRAPH_FILE_NAME);
+    }
 
 
     /* Checks if external storage is available for read and write*/
