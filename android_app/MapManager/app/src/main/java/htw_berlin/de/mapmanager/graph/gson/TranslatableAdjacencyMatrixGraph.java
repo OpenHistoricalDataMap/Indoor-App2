@@ -1,13 +1,24 @@
 package htw_berlin.de.mapmanager.graph.gson;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 	private InputStream propertiesInputStream;
+
+	@SerializedName("properties")
 	private Properties properties;
+
+	public TranslatableAdjacencyMatrixGraph(){
+		super();
+        nodes = new ArrayList<>();
+        properties = new Properties();
+	}
 
 	public TranslatableAdjacencyMatrixGraph(InputStream fileToLoad, InputStream propertiesFile) {
 		super();

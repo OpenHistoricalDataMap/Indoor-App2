@@ -2,23 +2,18 @@ package htw_berlin.de.mapmanager.graph.gson;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-
 public class Edge implements Comparable<Edge> {
 	@SerializedName("node1")
 	private Node node1;
 
-    @SerializedName("node2")
+	@SerializedName("node2")
 	private Node node2;
 
-    @SerializedName("weight")
+	@SerializedName("weight")
 	private int weight;
 
-    @SerializedName("barrierefrei")
+	@SerializedName("barrierefrei")
 	private boolean barrierefrei = false;
-
-    @SerializedName("edgePathSteps")
-    private ArrayList<EdgePathStep> edgePathSteps;
 
 	public Edge(Node node1, Node node2, int weight) {
 		this.node1 = node1;

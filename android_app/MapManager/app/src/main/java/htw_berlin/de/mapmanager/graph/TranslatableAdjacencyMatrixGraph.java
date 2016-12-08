@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
@@ -12,6 +13,12 @@ import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 	private InputStream propertiesInputStream;
 	private Properties properties;
+
+	public TranslatableAdjacencyMatrixGraph(){
+		super();
+        nodes = new ArrayList<>();
+        properties = new Properties();
+	}
 
 	public TranslatableAdjacencyMatrixGraph(InputStream fileToLoad, InputStream propertiesFile) {
 		super();
