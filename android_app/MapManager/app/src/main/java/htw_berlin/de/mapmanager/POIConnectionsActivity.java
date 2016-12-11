@@ -5,8 +5,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import htw_berlin.de.mapmanager.graph.Node;
@@ -85,7 +87,15 @@ public class POIConnectionsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 PersistenceManager persistenceManager = new PersistenceManager(permissionManager);
-                persistenceManager.storeGraph(MainActivity.graph);
+                //persistenceManager.storeGraph(MainActivity.graph);
+                try {
+                    persistenceManager.storeGraph(MainActivity.graph);
+                    //persistenceManager.storeGraph(MainActivity.graph);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(LOG_TAG, "Storing the json graph unseccsful");
+                }
+
                 finish();
             }
         });

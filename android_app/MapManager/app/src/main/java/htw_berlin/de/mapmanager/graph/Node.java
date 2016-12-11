@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class Node implements MarkableNode, Dijkstrable {
+	//@SerializedName("id")
 	public final int id;
+
+	//@SerializedName("edges")
 	private List<Edge> edges;
+
 	private Node markedPredecessor;
 	private int markedLength = 0;
 

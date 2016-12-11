@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -15,14 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStream;
 
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
@@ -36,7 +29,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Button newPoiButton;
     private ListView listView;
     private TextView poiNameTextView;
-    private Gson gson;
+
+    // TODO move this to PersistenceManager, make non-static
+    public static Gson gson;
 
     private PermissionManager permissionManager;
     private PersistenceManager persistenceManager;
@@ -50,32 +45,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setTitle("Liste der POI");
 
-        initPermissions();
 
-        //todo "delete all data" button
-
-        //gsonTest();
-        try {
-            loadGraphData();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            // data not loaded, create a new graph
-            createNewGraph();
-        }
-
-        initGuiElements();
-    }
-
-    private void createNewGraph() {
-        graph = new TranslatableAdjacencyMatrixGraph();
-    }
-
-
-    private void initPermissions() {
         permissionManager = new PermissionManager(this);
         permissionManager.checkExternalReadPermissions();
 
         persistenceManager = new PersistenceManager(permissionManager);
+
+        //todo "delete all data" button ?
+
+
+        try {
+            graph = persistenceManager.loadGraph();
+        } catch (FileNotFoundException e) {
+            // data not loaded, create a new graph
+            graph = emptyGraph();
+        }
+
+
+      initGUI();
+    }
+
+    private static final TranslatableAdjacencyMatrixGraph emptyGraph() {
+        return new TranslatableAdjacencyMatrixGraph();
     }
 
 
@@ -89,24 +80,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private void gsonTest() {
 
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("yyyy/MM/dd hh:mm a");
-        gson = gsonBuilder.create();
-
-
-        // create the 'gson' saveable graph
-        try {
-            JsonReader reader = new JsonReader(new FileReader(new File(PersistenceManager.getGraphStorageDir(), "json_graph.json")));
-
-            htw_berlin.de.mapmanager.graph.gson.TranslatableAdjacencyMatrixGraph gsonGraph = gson.fromJson(reader, htw_berlin.de.mapmanager.graph.gson.TranslatableAdjacencyMatrixGraph.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initGuiElements() {
+    private void initGUI() {
         // new POI Name text field
         poiNameTextView = (TextView) findViewById(R.id.newPOIName);
 
@@ -135,16 +110,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
             }
-            /*
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-            if (poiNameTextView != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(poiNameTextView.getWindowToken(), 0);
-            }
-            */
+
             // refresh gui
             adapter.notifyDataSetChanged();
         }
@@ -175,23 +141,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(intent);
     }
 
-    private void loadGraphData() throws FileNotFoundException {
-        InputStream graphInputStream = new FileInputStream(persistenceManager.getGraphFile());
-        InputStream graphPropertiesInputStream = new FileInputStream(persistenceManager.getGraphPropertiesFile());
 
-        graph = new TranslatableAdjacencyMatrixGraph(graphInputStream, graphPropertiesInputStream);
-
-/* TAKE GRAPH FROM RAW FOLDER
-        graph = new TranslatableAdjacencyMatrixGraph(
-                getResources().openRawResource(
-                        getResources().getIdentifier("places_net",
-                                "raw", getPackageName())),
-                getResources().openRawResource(
-                        getResources().getIdentifier("places",
-                                "raw", getPackageName())));
-                                */
-
-    }
 
 
 

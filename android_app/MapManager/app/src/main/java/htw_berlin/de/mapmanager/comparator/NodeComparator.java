@@ -5,7 +5,6 @@ import java.util.Comparator;
 import htw_berlin.de.mapmanager.graph.Node;
 
 
-
 public class NodeComparator implements Comparator<Node> {
     @Override
     public int compare(Node o1, Node o2) {
