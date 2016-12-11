@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -14,11 +16,13 @@ import java.util.ArrayList;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.ui.adapter.ConnectionListAdapter;
 
 public class POIConnectionsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "POIConnectionsActivity";
 
+    private Button defineEdgeButton;
     private ListView listView;
     private ConnectionListAdapter adapter;
 
@@ -43,6 +47,7 @@ public class POIConnectionsActivity extends AppCompatActivity {
         setTitle(MainActivity.graph.getNodeAsText(parentNode));
 
         initPermissions();
+
         initListView();
     }
 
@@ -63,8 +68,8 @@ public class POIConnectionsActivity extends AppCompatActivity {
         adapter = new ConnectionListAdapter(parentNode, allOtherNodes, this);
         listView.setAdapter(adapter);
 
-    }
 
+    }
 
 
     @Override

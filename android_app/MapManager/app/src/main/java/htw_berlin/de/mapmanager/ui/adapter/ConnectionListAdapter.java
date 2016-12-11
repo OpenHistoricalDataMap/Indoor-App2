@@ -1,15 +1,20 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.ui.adapter;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import htw_berlin.de.mapmanager.DefineEdgeActivity;
+import htw_berlin.de.mapmanager.MainActivity;
+import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.graph.Edge;
 import htw_berlin.de.mapmanager.graph.Node;
 
@@ -27,10 +32,11 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         //ImageView imageView; OLD
         CheckBox cbReachable;
         CheckBox cbBarrierefrei;
+        Button defineEdge;
     }
 
     public ConnectionListAdapter(Node parentNode, ArrayList<Node> data, Context context) {
-        super(context, R.layout.connection_list_item, data);
+        super(context, R.layout.list_item_connection, data);
         this.parentNode = parentNode;
         this.dataSet = data;
 
@@ -84,13 +90,13 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
 
             viewHolder = new ViewHolder();
             final LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.connection_list_item, parent, false);
+            convertView = inflater.inflate(R.layout.list_item_connection, parent, false);
 
             viewHolder.poiName = (TextView) convertView.findViewById(R.id.poiName);
             //viewHolder.imageView = (ImageView) convertView.findViewById(R.id.listRowDetailsImage);
             viewHolder.cbReachable = (CheckBox) convertView.findViewById(R.id.cb_reachable);
             viewHolder.cbBarrierefrei = (CheckBox) convertView.findViewById(R.id.cb_barrierefrei);
-
+            viewHolder.defineEdge = (Button) convertView.findViewById(R.id.btnDefineEdge);
 
             convertView.setTag(viewHolder);
         } else {
@@ -106,18 +112,6 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
 
         viewHolder.poiName.setText(MainActivity.graph.getNodeAsText(node));
 
-        // alternative
-        // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
-        /* OLD
-        File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
-        if(!nodeImageFile.exists()){
-            viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
-        }
-        else {
-            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
-            viewHolder.imageView.setImageURI(nodeImageUri);
-        }
-        */
 
         Edge edgeToChild = parentNode.getEdgeToNode(node.id);
         boolean childReachable = edgeToChild != null;
@@ -126,6 +120,17 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
 
         if(childReachable) // connection exists
             viewHolder.cbBarrierefrei.setChecked(edgeToChild.isBarrierefrei());
+
+
+        // define edge button action
+        final Intent intent = new Intent(getContext(), DefineEdgeActivity.class);
+        intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.id);
+        viewHolder.defineEdge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(intent);
+            }
+        });
 
         // Return the completed view to render on screen
         return convertView;

@@ -21,6 +21,7 @@ import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";

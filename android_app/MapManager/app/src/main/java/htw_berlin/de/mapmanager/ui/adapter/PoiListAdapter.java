@@ -1,4 +1,4 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import htw_berlin.de.mapmanager.MainActivity;
+import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
@@ -21,7 +23,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
     private List<Node> dataSet;
     private int lastPosition = -1;
 
-    private static final int LAYOUT_LIST_ITEM = R.layout.poi_list_item;
+    private static final int LAYOUT_LIST_ITEM = R.layout.list_item_poi;
 
     // View lookup cache
     private static class ViewHolder {

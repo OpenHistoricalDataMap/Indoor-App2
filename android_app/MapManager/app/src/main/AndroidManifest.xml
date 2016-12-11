@@ -41,7 +41,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".POIDetailsActivity" />
-        <activity android:name=".POIConnectionsActivity"></activity>
+        <activity android:name=".POIConnectionsActivity" />
+
+        <!-- Sensor activities -->
+        <activity android:name=".DefineEdgeActivity" />
+        <activity android:name=".StepCountActivity" />
+        <activity android:name=".Compass2" />
+
     </application>
 
 </manifest>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_step_count"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.florianhausler.compass.StepCount">
+
+    <TextView
+        android:text="Gelaufene Meter:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/texViewStepCount"
+        android:layout_alignStart="@+id/texViewStepCount"
+        android:layout_marginTop="41dp"
+        android:id="@+id/textViewStepInMeter"/>
+
+    <TextView
+        android:text="Steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="75dp"
+        android:id="@+id/texViewStepCount"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/buttonStepCalibration"/>
+
+    <Button
+        android:text="Kalibrieren"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:id="@+id/buttonStepCalibration"
+        android:layout_below="@+id/textViewStepInMeter"
+        android:onClick="onClickButtonStepCalibration"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editTextDistanz"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/buttonStepCalibration"/>
+
+    <TextView
+        android:text="Distanz:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/textViewStepInMeter"
+        android:id="@+id/textView5"/>
+
+    <Button
+        android:text="Schritte in Metern"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:id="@+id/butonStepsToMeter"
+        android:onClick="onClickButtonStepsToMeter"
+        android:layout_below="@+id/editTextDistanz"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:text="avgDistanceStep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/butonStepsToMeter"
+        android:layout_marginTop="22dp"
+        android:id="@+id/textViewAvgDistanceStep"/>
+
+</RelativeLayout>
