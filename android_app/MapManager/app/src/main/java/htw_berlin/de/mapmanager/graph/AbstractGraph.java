@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractGraph implements NonDirectionalGraph {
+	//@SerializedName("nodes")
 	protected List<Node> nodes;
+
     /** Used to assign a new incremental ID to the node*/
+	//@SerializedName("lastNodeId")
     protected int lastNodeId;
 
 	@Override

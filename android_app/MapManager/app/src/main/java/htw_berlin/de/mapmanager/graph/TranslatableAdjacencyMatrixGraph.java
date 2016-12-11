@@ -1,17 +1,15 @@
 package htw_berlin.de.mapmanager.graph;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import htw_berlin.de.mapmanager.persistence.PersistenceManager;
-
 public class TranslatableAdjacencyMatrixGraph extends AdjacencyMatrixGraph {
 	private InputStream propertiesInputStream;
+
+	//@SerializedName("properties")
 	private Properties properties;
 
 	public TranslatableAdjacencyMatrixGraph(){

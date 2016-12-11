@@ -3,7 +3,6 @@ package htw_berlin.de.mapmanager.comparator;
 import java.util.Comparator;
 
 import htw_berlin.de.mapmanager.graph.Edge;
-import htw_berlin.de.mapmanager.graph.Node;
 
 
 public class EdgeComparator implements Comparator<Edge> {

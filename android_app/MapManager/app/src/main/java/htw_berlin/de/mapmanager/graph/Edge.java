@@ -1,9 +1,16 @@
 package htw_berlin.de.mapmanager.graph;
 
 public class Edge implements Comparable<Edge> {
+	//@SerializedName("node1")
 	private Node node1;
+
+	//@SerializedName("node2")
 	private Node node2;
+
+	//@SerializedName("weight")
 	private int weight;
+
+	//@SerializedName("barrierefrei")
 	private boolean barrierefrei = false;
 
 	public Edge(Node node1, Node node2, int weight) {
