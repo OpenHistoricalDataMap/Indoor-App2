@@ -1,21 +1,17 @@
 package htw_berlin.de.mapmanager;
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import htw_berlin.de.mapmanager.graph.Edge;
 import htw_berlin.de.mapmanager.graph.Node;
-import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class ConnectionListAdapter extends ArrayAdapter<Node> implements CompoundButton.OnCheckedChangeListener{
 
@@ -28,7 +24,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
     // View lookup cache
     private static class ViewHolder {
         TextView poiName;
-        ImageView imageView;
+        //ImageView imageView; OLD
         CheckBox cbReachable;
         CheckBox cbBarrierefrei;
     }
@@ -91,7 +87,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
             convertView = inflater.inflate(R.layout.connection_list_item, parent, false);
 
             viewHolder.poiName = (TextView) convertView.findViewById(R.id.poiName);
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.listRowDetailsImage);
+            //viewHolder.imageView = (ImageView) convertView.findViewById(R.id.listRowDetailsImage);
             viewHolder.cbReachable = (CheckBox) convertView.findViewById(R.id.cb_reachable);
             viewHolder.cbBarrierefrei = (CheckBox) convertView.findViewById(R.id.cb_barrierefrei);
 
@@ -104,7 +100,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         lastPosition = position;
 
         viewHolder.poiName.setTag(position);
-        viewHolder.imageView.setTag(position);
+        //viewHolder.imageView.setTag(position);
         viewHolder.cbReachable.setTag(position);
         viewHolder.cbBarrierefrei.setTag(position);
 
@@ -112,6 +108,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
 
         // alternative
         // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
+        /* OLD
         File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
         if(!nodeImageFile.exists()){
             viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
@@ -120,6 +117,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
             Uri nodeImageUri = Uri.fromFile(nodeImageFile);
             viewHolder.imageView.setImageURI(nodeImageUri);
         }
+        */
 
         Edge edgeToChild = parentNode.getEdgeToNode(node.id);
         boolean childReachable = edgeToChild != null;

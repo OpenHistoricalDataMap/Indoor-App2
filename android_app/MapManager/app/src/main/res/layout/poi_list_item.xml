@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,21 +6,25 @@
     android:orientation="horizontal"
     tools:activity=".MainActivity" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_width="@android:dimen/notification_large_icon_width"
+        android:layout_height="@android:dimen/notification_large_icon_height"
+        android:src="@mipmap/ic_launcher"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:id="@+id/lv_imageView" />
 
     <TextView
         android:text="TextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="15pt"
         android:id="@+id/lv_textView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"/>
-
+    </LinearLayout>
 </RelativeLayout>

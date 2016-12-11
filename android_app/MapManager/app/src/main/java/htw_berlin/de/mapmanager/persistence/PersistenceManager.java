@@ -1,15 +1,21 @@
 package htw_berlin.de.mapmanager.persistence;
 
 
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.graph.GraphAdapterBuilder;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Properties;
 
 import htw_berlin.de.mapmanager.graph.Edge;
 import htw_berlin.de.mapmanager.graph.Node;
@@ -24,12 +30,31 @@ public class PersistenceManager {
     private static final String ALBUMS_FOLDER = "mapamanager_albums";
     private static final String POI_PICTURE_NAME = "poi_picture.png";
     private static final String GRAPH_FOLDER = "graph";
-    private static final String GRAPH_FILE_NAME = "places_net.txt";
-    private static final String GRAPH_PROPERTIES_FILE_NAME = "places.properties";
-    private final PermissionManager permissionManager;
+    public static final String GRAPH_JSON_NAME = "json_graph.json";
+    private PermissionManager permissionManager;
+
+    private static final Gson gson;
+    // initialize gson
+    static {
+        // create the builder. This allows us to set multiple settings
+        final GsonBuilder gsonBuilder = new GsonBuilder().disableHtmlEscaping()
+                .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+                .setPrettyPrinting()
+                .serializeNulls();
+
+        // manage circular references in the graph (Edge->Node->Edge->...)
+        new GraphAdapterBuilder()
+                .addType(TranslatableAdjacencyMatrixGraph.class)
+                .addType(Node.class)
+                .addType(Edge.class)
+                .registerOn(gsonBuilder);
+
+        // Create the Gson object. THis is what we use to parse and convert
+        gson = gsonBuilder.create();
+    }
 
 
-    public PersistenceManager(PermissionManager permissionManager){
+    public PersistenceManager(final PermissionManager permissionManager){
         if(permissionManager == null){
             throw new IllegalArgumentException("Context cannot be null, it is required to check permissions at runtime");
         }
@@ -41,14 +66,14 @@ public class PersistenceManager {
      * @param nodeId The id of the node
      * @return File reference
      */
-    public static File getNodeImageFile(int nodeId){
-        File folder = getAlbumStorageDir(String.format("Node_%d", nodeId));
-        File image = new File(folder, POI_PICTURE_NAME);
+    public static File getNodeImageFile(final int nodeId){
+        final File folder = getAlbumStorageDir(String.format("Node_%d", nodeId));
+        final File image = new File(folder, POI_PICTURE_NAME);
         return image;
     }
 
     // for the pics
-    public static File getAlbumStorageDir(String albumName) {
+    private static File getAlbumStorageDir(final String albumName) {
         // Get the directory for the user's public pictures directory.
         // TODO: use internal directory for files, use DownloadManager to transfer this files to the Download folder on an "Export" action
         File file = new File(Environment.getExternalStoragePublicDirectory(
@@ -60,9 +85,9 @@ public class PersistenceManager {
         return file;
     }
     
-    public File getGraphStorageDir(){
+    private static File getGraphStorageDir(){
                 // Get the directory for the user's public documents directory.
-        File file = new File(Environment.getExternalStoragePublicDirectory(
+        final File file = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS), GRAPH_FOLDER);
         if (!file.mkdirs()) {
             Log.i(LOG_TAG, String.format("Directory %s structure MAY have not been completely created (possibly because it already existed)", file.getAbsolutePath()));
@@ -71,12 +96,12 @@ public class PersistenceManager {
     }
 
 
-    // TODO: use internal directory for files, use DownloadManager to transfer this files to the Download folder on an "Export" action
+    // TODO: use internal hidden directory for files, then use DownloadManager to transfer this files to the Download folder on an "Export" action
     public void exportConfiguration(){
 
     }
 
-    public boolean storeGraph(TranslatableAdjacencyMatrixGraph graph){
+    public boolean storeGraph(TranslatableAdjacencyMatrixGraph graph) throws IOException {
         if(!this.permissionManager.isWriteExternalAllowed()){
             Log.e(LOG_TAG, "Permissions were never requested for this permission manager. \n Make sure to have called checkExternalWritePermissions(). Aborting storeGraph()...");
             return false;
@@ -85,85 +110,45 @@ public class PersistenceManager {
         boolean errorOccured = false;
 
         if (!isExternalStorageReadable()) {
-           Log.e(LOG_TAG, "not readable");
+            Log.e(LOG_TAG, "not readable");
         }
 
         if (!isExternalStorageWritable()) {
             System.err.println("not writable");
-            // TODO: probably should not continue writing if storage is not writable
+            // TODO: probably should not continue writing if storage is not writable --> throw exception?
         }
 
-        final File graphFile = new File(getGraphStorageDir(), GRAPH_FILE_NAME);
-        /* TODO possibly just simply throw an IOException (or a custom exception) so that the activity can handle it as necessary (e.g. ask the user to try save again the file)
-         */
-        graphFile.delete();
-        if(!graphFile.exists()){
-            try {
-                graphFile.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Unable to create new File " + graphFile.getAbsolutePath());
-                e.printStackTrace();
-            }
+        final JsonWriter writer = new JsonWriter(new FileWriter(getGraphFile()));
+        gson.toJson(graph, TranslatableAdjacencyMatrixGraph.class, writer);
+        writer.flush();
+        writer.close();
+
+        return true;
+    }
+
+    public static TranslatableAdjacencyMatrixGraph loadGraph() throws FileNotFoundException {
+        if (!isExternalStorageReadable()) {
+            Log.e(LOG_TAG, "not readable");
         }
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter(graphFile))){
-            // print the first line "header" of the matrix)
-            pw.print("_" + "\t");
-            for (Node node : graph.getNodes()) {
-                pw.print(node.id + "\t");
-            }
-            pw.println();
-            // TODO: Verify if it is necessary to ensure the correct order of the nodes (eventually use NodeComparator class to sort the nodes)
-            int edgeWeight;
-            for(Node nodeRow : graph.getNodes()){
-                pw.print(nodeRow.id + "\t");
-                for(Node nodeCol : graph.getNodes()){
-                    Edge edgeRowToCol = nodeRow.getEdgeToNode(nodeCol.id);
-                    if(edgeRowToCol != null) {
-                        edgeWeight = edgeRowToCol.getWeight();
-                    }
-                    else {
-                        // no edge, weight = 0
-                        edgeWeight = 0;
-                    }
-                    // TODO, add printing of barrierefrei attribute (maybe as {weight, barrierefrei}) ? Remember to adapt the parser in the graph classes
-                    pw.print(edgeWeight + "\t");
-                }
-                pw.println();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!isExternalStorageWritable()) {
+            System.err.println("not writable");
+            // TODO: probably should not continue writing if storage is not writable --> throw exception?
         }
 
+        final JsonReader reader = new JsonReader(new FileReader(getGraphFile()));
+        return gson.fromJson(reader, TranslatableAdjacencyMatrixGraph.class);
 
-        final File graphPropertiesFile = new File(getGraphStorageDir(), GRAPH_PROPERTIES_FILE_NAME);
-        graphPropertiesFile.delete();
-        if(!graphPropertiesFile.exists()){
-            try {
-                graphPropertiesFile.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Unable to create new File " + graphPropertiesFile.getAbsolutePath());
-                e.printStackTrace();
-            }
-        }
-        try (PrintWriter pw = new PrintWriter(new FileWriter(graphPropertiesFile))){
-            Properties props = graph.getProperties();
+    }
 
-            props.store(pw, "no comments");
-            errorOccured = pw.checkError();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return !errorOccured;
+    public static File getGraphFile() {
+        return new File(getGraphStorageDir(), GRAPH_JSON_NAME);
     }
 
 
-
     /* Checks if external storage is available for read and write*/
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
+    public static boolean isExternalStorageWritable() {
+        final String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             return true;
         }
@@ -171,8 +156,8 @@ public class PersistenceManager {
     }
 
     /* Checks if external storage is available to at least read*/
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
+    public static boolean isExternalStorageReadable() {
+        final String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
             return true;

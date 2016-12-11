@@ -1,18 +1,26 @@
 package htw_berlin.de.mapmanager;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import java.io.FileNotFoundException;
+
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
+import htw_berlin.de.mapmanager.permissions.PermissionManager;
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";
@@ -22,16 +30,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView listView;
     private TextView poiNameTextView;
 
+    // TODO move this to PersistenceManager, make non-static
+    public static Gson gson;
+
+    private PermissionManager permissionManager;
+    private PersistenceManager persistenceManager;
+
+    private static final String LOG_TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadGraphData();
-        initGuiElements();
+        setTitle("Liste der POI");
+
+
+        permissionManager = new PermissionManager(this);
+        permissionManager.checkExternalReadPermissions();
+
+        persistenceManager = new PersistenceManager(permissionManager);
+
+        //todo "delete all data" button ?
+
+
+        try {
+            graph = persistenceManager.loadGraph();
+        } catch (FileNotFoundException e) {
+            // data not loaded, create a new graph
+            graph = emptyGraph();
+        }
+
+
+      initGUI();
     }
 
-    private void initGuiElements() {
+    private static final TranslatableAdjacencyMatrixGraph emptyGraph() {
+        return new TranslatableAdjacencyMatrixGraph();
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // just redraw all the views (in particular the images) in case new pictures have been taken
+        // Attention: this does not update the adapter's listModel, it just redraws what is already available!
+        listView.invalidateViews();
+    }
+
+
+
+    private void initGUI() {
         // new POI Name text field
         poiNameTextView = (TextView) findViewById(R.id.newPOIName);
 
@@ -50,8 +100,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Called when the user clicks the new POI button */
     public void newPOI(View view){
         final String poiName = poiNameTextView.getText().toString();
-        if(poiName != null &! poiName.equalsIgnoreCase("")){
-           graph.addNewNode(poiName);
+        poiNameTextView.setText("");
+        if(!poiName.equalsIgnoreCase("")){
+            graph.addNewNode(poiName);
+
+            // close the keyboard
+            View currentFocus = this.getCurrentFocus();
+            if (currentFocus != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
+            }
 
             // refresh gui
             adapter.notifyDataSetChanged();
@@ -59,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         else {
             showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name (minimum 1 non-special Character)");
         }
+
+
     }
 
     private void showSimpleAlert(String title, String message){
@@ -76,21 +136,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /** Called when the user taps on a POI in the list */
     public void goToManageConnections(Node nodeSelected){
-        Intent intent = new Intent(this, ManagePOIConnectionsActivity.class);
+        Intent intent = new Intent(this, POIDetailsActivity.class);
         intent.putExtra(EXTRA_MESSAGE_POI_ID,  nodeSelected.id);
         startActivity(intent);
     }
 
-    public void loadGraphData() {
-        graph = new TranslatableAdjacencyMatrixGraph(
-                getResources().openRawResource(
-                        getResources().getIdentifier("places_net",
-                                "raw", getPackageName())),
-                getResources().openRawResource(
-                        getResources().getIdentifier("places",
-                                "raw", getPackageName())));
 
-    }
+
+
 
     /**
      * android:clickable="false" attribute in containing Layout tag in the layout/list_item.xml is

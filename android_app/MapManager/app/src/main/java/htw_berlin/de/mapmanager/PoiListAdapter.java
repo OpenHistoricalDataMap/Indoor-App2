@@ -1,7 +1,8 @@
 package htw_berlin.de.mapmanager;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,17 +63,36 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
 
         // alternative
         // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
+        //image representation in list
+
         File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
         if(!nodeImageFile.exists()){
             viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
         }
         else {
-            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
-            viewHolder.imageView.setImageURI(nodeImageUri);
-        }
+            /*
+            Note: do not use URIs, because with big pictures, all data will be loaded in background (really heavy)
+            while with this system we actually reduce the size of the image
+             */
+            Bitmap bitmap = loadLightweightBitmapFromFile(nodeImageFile);
+            viewHolder.imageView.setImageBitmap(bitmap);
 
+            // load efficiently (buggy)
+            // http://stackoverflow.com/questions/20441644/java-lang-outofmemoryerror-bitmapfactory-decodestrpath
+            // https://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+            //if(bitmap != null &! bitmap.isRecycled()){
+             //   bitmap.recycle();
+              //  bitmap = null;
+            //}
+        }
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    private Bitmap loadLightweightBitmapFromFile(File file){
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        return BitmapFactory.decodeFile(file.getPath(),options);
     }
 }

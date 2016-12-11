@@ -4,12 +4,12 @@
 
     <!-- To store graph data on external storage, so that it is accessible from others -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- To read graph data from external storage-->
+    <!-- To read graph data from external storage -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- To take pictures -->
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <!-- Still to take pictures-->
+    <!-- Still to take pictures -->
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="true" />
@@ -23,7 +23,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -31,7 +30,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <activity android:name=".MainActivity">
@@ -41,7 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ManagePOIConnectionsActivity" />
+        <activity android:name=".POIDetailsActivity" />
+        <activity android:name=".POIConnectionsActivity"></activity>
     </application>
 
 </manifest>
