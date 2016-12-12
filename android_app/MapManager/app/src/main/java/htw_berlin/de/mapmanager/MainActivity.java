@@ -16,8 +16,6 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
@@ -93,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // list view
         listView = (ListView) findViewById(R.id.poiListView);
-        List<Node> setAsList = new ArrayList<Node>(graph.getNodes());
-        adapter = new PoiListAdapter(setAsList, this);
+        adapter = new PoiListAdapter(graph.getNodes(), this);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
             }
 
-            // refresh gui
+            // refresh gui (not going to work if Graph.nodes is a (Linked)HashSet
             adapter.notifyDataSetChanged();
         }
         else {

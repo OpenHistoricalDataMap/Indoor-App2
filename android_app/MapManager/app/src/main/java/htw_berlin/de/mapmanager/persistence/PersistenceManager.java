@@ -44,7 +44,7 @@ public class PersistenceManager {
 
         // manage circular references in the graph (Edge->Node->Edge->...)
         new GraphAdapterBuilder()
-                .addType(Node.class)
+                //.addType(Node.class) // TODO: enable if necessary (youll probably need to delete the graph.json data)
                 .registerOn(gsonBuilder);
 
         // Create the Gson object. THis is what we use to parse and convert
@@ -118,6 +118,9 @@ public class PersistenceManager {
 
         final JsonWriter writer = new JsonWriter(new FileWriter(getGraphFile()));
         gson.toJson(graph, Graph.class, writer);
+
+        System.out.println(gson.toJson(graph, Graph.class));
+
         writer.flush();
         writer.close();
 

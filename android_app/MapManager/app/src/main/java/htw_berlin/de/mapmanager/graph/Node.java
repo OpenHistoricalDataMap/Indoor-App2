@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Carola Walter
@@ -24,6 +24,8 @@ public class Node {
 
     @Expose
     List<SignalInformation> signalInformationList;
+    private MarkableNode markedPredecessor;
+    private int markedLength;
 
 
     public static class SignalInformation {

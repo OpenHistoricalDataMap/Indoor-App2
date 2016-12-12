@@ -11,8 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import htw_berlin.de.mapmanager.R;
@@ -95,4 +93,5 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
         options.inSampleSize = 8;
         return BitmapFactory.decodeFile(file.getPath(),options);
     }
+
 }
