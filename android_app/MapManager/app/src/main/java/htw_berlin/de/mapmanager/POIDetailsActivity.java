@@ -39,13 +39,15 @@ public class POIDetailsActivity extends AppCompatActivity{
 
         // Get information about the POI
         Intent intent = getIntent();
-        int poiId = intent.getIntExtra(MainActivity.EXTRA_MESSAGE_POI_ID, -1);
-        if(poiId == -1){
+        String poiId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_POI_ID);
+        if(poiId == null || poiId == ""){
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
+        // TODO this operation could run through all the nodes. Consider passing the whole Node
+        // TODO look on the internet what would be more performance expensive
         this.parentNode = MainActivity.graph.getNodeById(poiId);
-        setTitle(MainActivity.graph.getNodeAsText(parentNode));
+        setTitle(parentNode.getId());
 
 
         initPermissions();
@@ -60,7 +62,7 @@ public class POIDetailsActivity extends AppCompatActivity{
         setConnections = (Button) findViewById(R.id.btnSetConnections);
 
         final Intent intent = new Intent(this, POIConnectionsActivity.class);
-        intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.id);
+        intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.getId());
 
         setConnections.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +74,7 @@ public class POIDetailsActivity extends AppCompatActivity{
 
     private void initImageView() {
         currentPOIImage = (ImageView) findViewById(R.id.currentPOIImage);
-        File nodeImageFile = PersistenceManager.getNodeImageFile(parentNode.id);
+        File nodeImageFile = PersistenceManager.getNodeImageFile(parentNode.getId());
         if(!nodeImageFile.exists()){
             currentPOIImage.setImageResource(R.mipmap.ic_launcher);
         }
@@ -107,7 +109,7 @@ public class POIDetailsActivity extends AppCompatActivity{
                     return;
                 }
 
-                File newFile = PersistenceManager.getNodeImageFile(parentNode.id);
+                File newFile = PersistenceManager.getNodeImageFile(parentNode.getId());
                 Uri outputFileUri = FileProvider.getUriForFile(POIDetailsActivity.this, getApplicationContext().getPackageName() + ".provider", newFile);
                 // alternative
                 //Uri outputFileUri = Uri.fromFile(newFile);

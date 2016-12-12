@@ -17,9 +17,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import htw_berlin.de.mapmanager.graph.Edge;
+import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
-import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 
 public class PersistenceManager {
@@ -40,13 +39,12 @@ public class PersistenceManager {
         final GsonBuilder gsonBuilder = new GsonBuilder().disableHtmlEscaping()
                 .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
                 .setPrettyPrinting()
+                .excludeFieldsWithoutExposeAnnotation()
                 .serializeNulls();
 
         // manage circular references in the graph (Edge->Node->Edge->...)
         new GraphAdapterBuilder()
-                .addType(TranslatableAdjacencyMatrixGraph.class)
                 .addType(Node.class)
-                .addType(Edge.class)
                 .registerOn(gsonBuilder);
 
         // Create the Gson object. THis is what we use to parse and convert
@@ -66,8 +64,8 @@ public class PersistenceManager {
      * @param nodeId The id of the node
      * @return File reference
      */
-    public static File getNodeImageFile(final int nodeId){
-        final File folder = getAlbumStorageDir(String.format("Node_%d", nodeId));
+    public static File getNodeImageFile(final String nodeId){
+        final File folder = getAlbumStorageDir(nodeId);
         final File image = new File(folder, POI_PICTURE_NAME);
         return image;
     }
@@ -101,7 +99,7 @@ public class PersistenceManager {
 
     }
 
-    public boolean storeGraph(TranslatableAdjacencyMatrixGraph graph) throws IOException {
+    public boolean storeGraph(Graph graph) throws IOException {
         if(!this.permissionManager.isWriteExternalAllowed()){
             Log.e(LOG_TAG, "Permissions were never requested for this permission manager. \n Make sure to have called checkExternalWritePermissions(). Aborting storeGraph()...");
             return false;
@@ -119,14 +117,14 @@ public class PersistenceManager {
         }
 
         final JsonWriter writer = new JsonWriter(new FileWriter(getGraphFile()));
-        gson.toJson(graph, TranslatableAdjacencyMatrixGraph.class, writer);
+        gson.toJson(graph, Graph.class, writer);
         writer.flush();
         writer.close();
 
         return true;
     }
 
-    public static TranslatableAdjacencyMatrixGraph loadGraph() throws FileNotFoundException {
+    public static Graph loadGraph() throws FileNotFoundException {
         if (!isExternalStorageReadable()) {
             Log.e(LOG_TAG, "not readable");
         }
@@ -137,7 +135,7 @@ public class PersistenceManager {
         }
 
         final JsonReader reader = new JsonReader(new FileReader(getGraphFile()));
-        return gson.fromJson(reader, TranslatableAdjacencyMatrixGraph.class);
+        return gson.fromJson(reader, Graph.class);
 
     }
 

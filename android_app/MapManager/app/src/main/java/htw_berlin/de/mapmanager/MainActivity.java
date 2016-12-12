@@ -16,16 +16,18 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
+import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
-import htw_berlin.de.mapmanager.graph.TranslatableAdjacencyMatrixGraph;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";
-    public static TranslatableAdjacencyMatrixGraph graph;
+    public static Graph graph;
     private PoiListAdapter adapter;
     private Button newPoiButton;
     private ListView listView;
@@ -66,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
       initGUI();
     }
 
-    private static final TranslatableAdjacencyMatrixGraph emptyGraph() {
-        return new TranslatableAdjacencyMatrixGraph();
+    private static final Graph emptyGraph() {
+        return new Graph();
     }
 
 
@@ -91,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // list view
         listView = (ListView) findViewById(R.id.poiListView);
-        adapter = new PoiListAdapter(graph.getNodes(), this);
+        List<Node> setAsList = new ArrayList<Node>(graph.getNodes());
+        adapter = new PoiListAdapter(setAsList, this);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(this);
@@ -103,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         final String poiName = poiNameTextView.getText().toString();
         poiNameTextView.setText("");
         if(!poiName.equalsIgnoreCase("")){
-            graph.addNewNode(poiName);
+
+            graph.addNode(new Node(poiName));
 
             // close the keyboard
             View currentFocus = this.getCurrentFocus();
@@ -138,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** Called when the user taps on a POI in the list */
     public void goToManageConnections(Node nodeSelected){
         Intent intent = new Intent(this, POIDetailsActivity.class);
-        intent.putExtra(EXTRA_MESSAGE_POI_ID,  nodeSelected.id);
+        intent.putExtra(EXTRA_MESSAGE_POI_ID,  nodeSelected.getId());
         startActivity(intent);
     }
 

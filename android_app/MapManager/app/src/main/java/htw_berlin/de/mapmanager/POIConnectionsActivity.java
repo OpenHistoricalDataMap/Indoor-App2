@@ -38,13 +38,13 @@ public class POIConnectionsActivity extends AppCompatActivity {
 
         // Get information about the connections
         Intent intent = getIntent();
-        int poiId = intent.getIntExtra(MainActivity.EXTRA_MESSAGE_POI_ID, -1);
-        if(poiId == -1){
+        String poiId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_POI_ID);
+        if(poiId == null || poiId == ""){
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
         this.parentNode = MainActivity.graph.getNodeById(poiId);
-        setTitle(MainActivity.graph.getNodeAsText(parentNode));
+        setTitle(parentNode.getId());
 
         initPermissions();
 
