@@ -1,4 +1,4 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.compass;
 
 import android.content.Intent;
 import android.hardware.SensorManager;
@@ -7,6 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.compass.Compass2Activity;
+import htw_berlin.de.mapmanager.compass.StepCountActivity;
 
 public class DefineEdgeActivity extends AppCompatActivity {
 
@@ -32,7 +36,7 @@ public class DefineEdgeActivity extends AppCompatActivity {
     }
 
     public void onClickCompass(View view){
-        Intent intent =new Intent(this,Compass2.class);
+        Intent intent =new Intent(this,Compass2Activity.class);
         startActivity(intent);
 
     }

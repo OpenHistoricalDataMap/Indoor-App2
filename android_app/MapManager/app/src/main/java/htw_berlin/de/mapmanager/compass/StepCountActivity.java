@@ -1,4 +1,4 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.compass;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import htw_berlin.de.mapmanager.R;
 
 public class StepCountActivity extends AppCompatActivity {
 

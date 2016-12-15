@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import htw_berlin.de.mapmanager.DefineEdgeActivity;
+import htw_berlin.de.mapmanager.compass.DefineEdgeActivity;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.graph.Node;

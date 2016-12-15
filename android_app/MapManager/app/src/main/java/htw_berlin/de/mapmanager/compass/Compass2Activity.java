@@ -1,4 +1,4 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.compass;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class Compass2 extends AppCompatActivity {
+import htw_berlin.de.mapmanager.R;
+
+public class Compass2Activity extends AppCompatActivity {
 
     private TextView textViewX,textViewY,textViewZ;
     private Button calibrationButton;
