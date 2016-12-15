@@ -3,9 +3,8 @@ package htw_berlin.de.mapmanager.graph;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Carola Walter
@@ -20,7 +19,7 @@ public class Node {
     float zValue;
 
     @Expose
-    private HashMap<String, Integer> edges; // <toNodeId, meters>
+    private LinkedHashMap<String, Integer> edges; // <toNodeId, meters>, Linked preserves order
 
     @Expose
     List<SignalInformation> signalInformationList;
@@ -55,7 +54,7 @@ public class Node {
     }
 
 
-    public Node(String id, float zValue, List<SignalInformation> signalInformationList, HashMap<String, Integer> edges) {
+    public Node(String id, float zValue, List<SignalInformation> signalInformationList, LinkedHashMap<String, Integer> edges) {
         this.id = id;
         this.zValue = zValue;
         this.signalInformationList = signalInformationList;
@@ -63,7 +62,7 @@ public class Node {
     }
 
     public Node(String id, float zValue, List<SignalInformation> signalInformationList) {
-        this(id, zValue, signalInformationList, new HashMap<String, Integer>());
+        this(id, zValue, signalInformationList, new LinkedHashMap<String, Integer>());
     }
 
     public Node(String id){
@@ -94,11 +93,11 @@ public class Node {
         this.signalInformationList = signalInformationList;
     }
 
-    public HashMap<String, Integer> getEdges() {
+    public LinkedHashMap<String, Integer> getEdges() {
         return edges;
     }
 
-    public void setEdges(HashMap<String, Integer> edges) {
+    public void setEdges(LinkedHashMap<String, Integer> edges) {
         this.edges = edges;
     }
 }
