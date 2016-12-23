@@ -32,22 +32,22 @@ public class Node {
         String timestamp;
 
         @Expose
-        List<SignalStrenghtInformation> signalStrenghtInformationList;
+        List<SignalStrengthInformation> signalStrengthInformationList;
 
-        public SignalInformation(String timestamp, List<SignalStrenghtInformation> signalStrenghtInformationList) {
+        public SignalInformation(String timestamp, List<SignalStrengthInformation> signalStrengthInformationList) {
             this.timestamp = timestamp;
-            this.signalStrenghtInformationList = signalStrenghtInformationList;
+            this.signalStrengthInformationList = signalStrengthInformationList;
         }
     }
 
-    public static class SignalStrenghtInformation {
+    public static class SignalStrengthInformation {
         @Expose
         String macAdress;
 
         @Expose
         int signalStrength;
 
-        public SignalStrenghtInformation(String macAdress, int signalStrength) {
+        public SignalStrengthInformation(String macAdress, int signalStrength) {
             this.macAdress = macAdress;
             this.signalStrength = signalStrength;
         }

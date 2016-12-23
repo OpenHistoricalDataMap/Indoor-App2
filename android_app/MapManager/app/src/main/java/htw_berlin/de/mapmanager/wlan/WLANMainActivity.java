@@ -1,12 +1,10 @@
 package htw_berlin.de.mapmanager.wlan;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -27,20 +25,23 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
-import htw_berlin.de.mapmanager.wlan.BssidRelevant;
-import htw_berlin.de.mapmanager.wlan.ThatApp;
 
 
 public class WLANMainActivity extends AppCompatActivity implements View.OnClickListener {
 
+
+    private Node parentNode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         initPermissions();
+        initNode();
 
         ThatApp.initThatApp(this);
 
@@ -51,6 +52,20 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         button = (Button) this.findViewById(R.id.saveIntervall);
         button.setOnClickListener(this);
+    }
+
+    private void initNode()
+    {
+        Intent intent = getIntent();
+        String poiId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_POI_ID);
+        if(poiId == null || poiId == ""){
+            throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
+        }
+
+        // TODO this operation could run through all the nodes. Consider passing the whole Node
+        // TODO look on the internet what would be more performance expensive
+        this.parentNode = MainActivity.graph.getNodeById(poiId);
+        setTitle(parentNode.getId()+" Measurement");
     }
 
     private void initPermissions(){
@@ -70,7 +85,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if(v == saveIntervall){
-            this.saveIntervallJSON("ZFR");
+            this.saveIntervallInNode();
         }
 
     }
@@ -336,6 +351,43 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
             TextView tv = (TextView) this.findViewById(R.id.textView);
             tv.setText("IO EXCEPTION \n"+ioe.getLocalizedMessage());
         }
+    }
+
+    private void saveIntervallInNode()
+    {
+        Thread t = new Thread(new Runnable(){
+
+            int waitMilliseconds = 1000;
+
+            @Override
+            public void run() {
+                try {
+                    synchronized (this) {
+                        wait(waitMilliseconds);
+                        scanAgain();
+                        refresh();
+                    }
+                } catch (InterruptedException ex) {}
+            }
+        });
+        List<Node.SignalInformation> backupList = parentNode.getSignalInformationList();
+        List<Node.SignalInformation> signalList= parentNode.getSignalInformationList();
+        for(int i = 0; i<20;i++)
+        {
+            Date d = new Date();
+            List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
+            List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
+            for (ScanResult sr : scanResults) {
+                if (sr.SSID.equals("iii")) {
+                    Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
+                    signalStrengthList.add(signalStrengthEntry);
+                }
+            }
+            signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
+            t.run();
+        }
+        parentNode.setSignalInformationList(signalList);
+
     }
 
     public void refresh() {
