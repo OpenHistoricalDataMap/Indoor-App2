@@ -12,89 +12,90 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import htw_berlin.de.mapmanager.R;
 
 public class Compass2Activity extends AppCompatActivity {
 
-    private TextView textViewX,textViewY,textViewZ;
-    private Button calibrationButton;
+    private TextView textViewX, textViewSteps, textViewZ, textViewListe;
+    private Button calibrationButton, buttonDefineWay;
 
-    private SensorManager mSensorManager;
-    private float azimut;
-    private Sensor pressureSensor;
-    boolean calibration=true;
 
-    float nullPressure=0.0f;
-    private static final String TAG="Magnet";
+    //StepCount onSensorChange
+
+
+    private SensorManager pressureSensorManager, magnetSensorManager, stepSensorManager;
+    private float azimut, stepView, stepCount, stepVar;
+    private Sensor stepCountSensor, pressureSensor;
+
+
+    // onClickDefineWay
+    private boolean onClickDefineWay;
+
+    private int mod = 0;
+
+    //  private float highOverSee = 0.0f;
+
+    // private float nullPressure = 0.0f;
+    private static final String TAG = "Magnet";
+
+    //WayPointListe
+    private ArrayList<WayPoint> listWayPoint = new ArrayList<>();
+    private int index;
+
+    //MagnetBerechnung
+    SensorData sensorDaten = new SensorData();
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass2);
 
-        textViewX=(TextView)findViewById(R.id.txtCompassX);
-        textViewY=(TextView)findViewById(R.id.txtCompassY);
-        textViewZ=(TextView)findViewById(R.id.txtCompassZ);
-        calibrationButton=(Button)findViewById(R.id.btnCalibrate);
+        textViewX = (TextView) findViewById(R.id.txtCompassX);
+        textViewSteps = (TextView) findViewById(R.id.txtCompassY);
+        textViewZ = (TextView) findViewById(R.id.txtCompassZ);
+        textViewListe = (TextView) findViewById(R.id.txtViewListe);
+        calibrationButton = (Button) findViewById(R.id.btnCalibrate);
+        buttonDefineWay = (Button) findViewById(R.id.btnDefineWay);
 
-        mSensorManager=(SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        pressureSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        //PressureSensor
+        pressureSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        pressureSensor = pressureSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
 
-        Log.d(TAG,"Magnet Klasse");
+
+        //  stepCountSensor
+        stepSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepCountSensor = stepSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+
+        //MagnetSensor
+        magnetSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+
+        Log.d(TAG, "Magnet Klasse");
+
+
     }
 
-    float[] mGravity;
-    float[]mGeomagnetic;
     private SensorEventListener magnetListener = new SensorEventListener() {
+
         @Override
         public void onSensorChanged(SensorEvent event) {
-            float prssureValue=0.0f;
-            float highOverSee=0.0f;
-
-
 
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-                mGravity = event.values;
+                sensorDaten.setGravity(event.values);
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-                mGeomagnetic = event.values;
-            if (mGravity != null && mGeomagnetic != null) {
+                sensorDaten.setGeomagnetic(event.values);
 
-                float R[] = new float[9];
-                float I[] = new float[9];
-                boolean success = SensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-                if (success) {
-                    float orientation[] = new float[3];
+            sensorDaten.calcAzimut();
 
-
-                    SensorManager.getOrientation(R, orientation);
-                    float azimut2=orientation[0];
-                    int deg = (int)(azimut2 * (float)57.295);
-
-                    Log.d(TAG,"Azimut X: "+(float) Math.toDegrees(orientation[2]));
-                    azimut =(float) Math.toDegrees(orientation[0]) ; //
-
-                }
-            }
-            if (event.sensor.getType()== Sensor.TYPE_PRESSURE){
-                if(calibration==true){
-
-                    nullPressure=event.values[0];
-                    calibration=false;
-                }
-                prssureValue=event.values[0];
-                highOverSee= SensorManager.getAltitude(nullPressure,prssureValue);
-
-                Log.d(TAG,"Druck: "+event.values[0]);
-                Log.d(TAG,"Null Druck"+nullPressure);
-            }
-
-            textViewX.setText("Value X: "+azimut);
-            textViewY.setText("Genauigkeit: "+event.accuracy);
-            textViewZ.setText("Höhe über Null "+highOverSee);
-
-
-
+            textViewX.setText("Value X: " + sensorDaten.getAzimut());
         }
+
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
@@ -102,25 +103,120 @@ public class Compass2Activity extends AppCompatActivity {
 
         }
     };
-    public void onResume(){
+
+
+
+    private SensorEventListener pressureStepListner = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+
+                sensorDaten.setPrssureValue(event.values[0]);
+                Log.d(TAG, "" + sensorDaten.getPrssureValue());
+                sensorDaten.calcHigh();
+                textViewZ.setText("Höhe über Null " + sensorDaten.getHighOverSee());
+            }
+            if (event.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+
+                stepCount = event.values[0];
+                stepView = stepCount - stepVar;
+                textViewSteps.setText("Schritte: " + stepView);
+                if (stepView % 2 == 0 && onClickDefineWay) {
+                    defineWay();
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+    public void onClickCalibrationButton(View view) {
+        stepVar = stepCount;
+        stepView = stepCount - stepVar;
+        textViewSteps.setText("Schritte:" + stepView);
+        sensorDaten.setCalibration(true);
+
+    }
+
+    public void onClickDefineWay(View view) {
+
+
+        Log.d(TAG, "mode: " + mod);
+
+        if (mod % 2 == 0) {
+            buttonDefineWay.setText("Stop define way");
+            onClickDefineWay = true;
+
+        }
+        if (mod % 2 > 0) {
+            buttonDefineWay.setText("Start define way");
+            onClickDefineWay = false;
+            // listOfWays.addWay("test",listWayPoint);
+
+
+        }
+        mod++;
+
+
+    }
+    public ArrayList<WayPoint> getListWayPoint() {
+        return listWayPoint;
+    }
+
+    public void onClickShowList(View view) {
+
+        for (WayPoint s : listWayPoint) {
+            textViewListe.setText(textViewListe.getText() + s.toString() + System.lineSeparator());
+
+
+        }
+    }
+
+    public void defineWay() {
+
+
+        WayPoint newPoint = new WayPoint(sensorDaten.getAzimut(),
+                stepView, sensorDaten.getHighOverSee());
+
+        listWayPoint.add(index, newPoint);
+        Log.d(TAG, "defineWay() ->" + newPoint);
+        Log.d(TAG, "defineWay() ->" + listWayPoint.get(index).toString());
+        Log.d(TAG, "defineWay() ->" + index);
+        index++;
+
+
+    }
+
+    public void onResume() {
         super.onResume();
-        mSensorManager.registerListener(magnetListener,mSensorManager
+        magnetSensorManager.registerListener(magnetListener, magnetSensorManager
                 .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_NORMAL);
 
-        mSensorManager.registerListener(magnetListener,mSensorManager
+        magnetSensorManager.registerListener(magnetListener, magnetSensorManager
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        mSensorManager.registerListener(magnetListener,pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
+        pressureSensorManager.registerListener(pressureStepListner, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-    public void onPause(){
+
+        stepSensorManager.registerListener(pressureStepListner, stepCountSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+    }
+    public void onPause() {
         super.onPause();
-        mSensorManager.unregisterListener(magnetListener);
-    }
-
-    public void onClickCalibrationButton(View view){
-        calibration=true;
-
+        pressureSensorManager.unregisterListener(pressureStepListner);
+        //magnetSensorManager.unregisterListener(magnetListener);
+        stepSensorManager.unregisterListener(pressureStepListner);
     }
 
 
-}
+
+
+    }
+
+
+
+
