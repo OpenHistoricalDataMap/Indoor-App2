@@ -28,16 +28,6 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="26dp" />
 
-    <Button
-        android:text="Scan Again"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/refresh"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="18dp"
-        android:layout_marginEnd="18dp"
-        android:id="@+id/scanAgain" />
 
     <Button
         android:layout_width="wrap_content"
@@ -53,17 +43,10 @@
         android:text="SAVE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/saveFile"
-        android:layout_toLeftOf="@+id/connectedWLAN"
-        android:layout_toStartOf="@+id/connectedWLAN"
-        android:layout_alignBottom="@+id/refresh" />
-
-    <Button
-        android:text="SaveIntervall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/saveIntervall"
-        android:layout_above="@+id/scanAgain"
-        android:layout_toRightOf="@+id/saveFile"
-        android:layout_toEndOf="@+id/saveFile" />
+        android:layout_marginBottom="19dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        />
+
 </RelativeLayout>

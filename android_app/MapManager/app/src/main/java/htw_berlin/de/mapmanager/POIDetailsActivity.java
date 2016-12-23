@@ -17,6 +17,7 @@ import java.io.File;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.wlan.WLANMainActivity;
 
 public class POIDetailsActivity extends AppCompatActivity{
 
@@ -27,6 +28,7 @@ public class POIDetailsActivity extends AppCompatActivity{
 
     private Button capture;
     private Button setConnections;
+    private Button btnGoToMeasurement;
     private ImageView currentPOIImage;
 
     private PermissionManager permissionManager;
@@ -54,8 +56,25 @@ public class POIDetailsActivity extends AppCompatActivity{
 
         // TODO: get the ArrayList of images of the POI
         initImageView();
+        initMeasurements();
         initCamera();
         initSetConnections();
+    }
+
+    private void initMeasurements()
+    {
+        btnGoToMeasurement = (Button) findViewById(R.id.btnMeasurements);
+
+        final Intent intent = new Intent(this, WLANMainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID, parentNode.getId());
+
+        btnGoToMeasurement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void initSetConnections() {

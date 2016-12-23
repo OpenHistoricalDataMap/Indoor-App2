@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.wlan.BssidRelevant;
 import htw_berlin.de.mapmanager.wlan.ThatApp;
 
@@ -39,14 +40,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String[] PERMISSIONS_STORAGE={Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
-
-        //this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission_group.STORAGE}, 1);
-        int permission = ActivityCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permission != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this,PERMISSIONS_STORAGE,1);
-        }
+        initPermissions();
 
         ThatApp.initThatApp(this);
 
@@ -55,32 +49,24 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         Button button = (Button) this.findViewById(R.id.refresh);
         button.setOnClickListener(this);
 
-        button = (Button) this.findViewById(R.id.scanAgain);
-        button.setOnClickListener(this);
-
-        button = (Button) this.findViewById(R.id.saveFile);
-        button.setOnClickListener(this);
-
         button = (Button) this.findViewById(R.id.saveIntervall);
         button.setOnClickListener(this);
     }
 
+    private void initPermissions(){
+        PermissionManager permissionManager = new PermissionManager(this);
+        permissionManager.checkWifiPermissions();
+        permissionManager.checkExternalReadPermissions();
+        permissionManager.checkExternalWritePermissions();
+    }
+
     public void onClick(View v) {
         Button refreshButton = (Button) this.findViewById(R.id.refresh);
-        Button scanButton = (Button) this.findViewById(R.id.scanAgain);
-        Button saveButton = (Button) this.findViewById(R.id.saveFile);
         Button saveIntervall = (Button) this.findViewById(R.id.saveIntervall);
 
         if(v == refreshButton) {
-            this.refresh();
-        }
-
-        if(v == scanButton) {
             this.scanAgain();
-        }
-
-        if(v == saveButton){
-            this.saveFileJSON("ZFR",0);
+            this.refresh();
         }
 
         if(v == saveIntervall){

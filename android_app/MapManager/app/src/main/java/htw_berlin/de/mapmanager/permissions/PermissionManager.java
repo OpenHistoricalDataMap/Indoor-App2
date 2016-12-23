@@ -19,13 +19,15 @@ public class PermissionManager implements ActivityCompat.OnRequestPermissionsRes
     private boolean cameraAllowed;
     private boolean readExternalAllowed;
     private boolean writeExternalAllowed;
+    private boolean locationAllowed;
     private static final String LOG_TAG = "PermissionManager";
 
 
     private static enum RuntimePermissionsRequestCodes {
         CAMERA,
         READ_EXTERNAL_STORAGE,
-        WRITE_EXTERNAL_STORAGE
+        WRITE_EXTERNAL_STORAGE,
+        LOCATION
     }
 
     public PermissionManager(Activity activity){
@@ -47,6 +49,17 @@ public class PermissionManager implements ActivityCompat.OnRequestPermissionsRes
         }
     }
 
+    public void checkWifiPermissions(){
+        final String permission= Manifest.permission.ACCESS_FINE_LOCATION;
+        if (activity.checkSelfPermission(permission)!= PackageManager.PERMISSION_GRANTED)
+        {
+            activity.requestPermissions(new String[]{permission},
+                    RuntimePermissionsRequestCodes.LOCATION.ordinal());
+        }
+        else
+            this.locationAllowed = true;
+
+    }
 
     /**
      * Mandatory from Android 6 to check permissions at runtime
@@ -111,6 +124,11 @@ public class PermissionManager implements ActivityCompat.OnRequestPermissionsRes
                 writeExternalAllowed = resultBoolean;
                 continue;
             }
+            else if(requestCode == RuntimePermissionsRequestCodes.LOCATION.ordinal()){
+                Log.d(LOG_TAG,"Wifi Location allowed" + resultBoolean);
+                locationAllowed = resultBoolean;
+                continue;
+            }
             else {
                 Log.e(LOG_TAG, "requestCode not recognised, did you method requestPermissions() with the wrong RuntimePermissionsRequestCode?");
             }
@@ -128,4 +146,6 @@ public class PermissionManager implements ActivityCompat.OnRequestPermissionsRes
     public boolean isWriteExternalAllowed() {
         return writeExternalAllowed;
     }
+
+    public boolean isLocationAllowed() { return locationAllowed;}
 }

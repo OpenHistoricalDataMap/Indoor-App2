@@ -20,7 +20,7 @@
             android:id="@+id/btnCapture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take new picture"
+            android:text="Take new \n picture"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true" />
 
@@ -29,6 +29,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="Set Connections"
+            android:text="Set\nConnections"
             android:layout_alignParentBottom="true"/>
+
+        <Button
+            android:id="@+id/btnMeasurements"
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/btnCapture"
+            android:layout_toLeftOf="@id/btnSetConnections"
+            android:layout_alignParentBottom="true"
+            android:layout_alignTop="@id/btnCapture"
+            android:text="Messen"></Button>
 </RelativeLayout>
