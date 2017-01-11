@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import htw_berlin.de.mapmanager.compass.WayPoint;
+
 /**
  * Created by Carola Walter
  * Changed by Christoph Bose, tognitos
@@ -20,6 +22,10 @@ public class Node {
 
     @Expose
     private LinkedHashMap<String, Integer> edges; // <toNodeId, meters>, Linked preserves order
+
+    private ArrayList<WayPoint> way = new ArrayList<>();
+
+
 
     @Expose
     List<SignalInformation> signalInformationList;
@@ -65,6 +71,7 @@ public class Node {
         this(id, zValue, signalInformationList, new LinkedHashMap<String, Integer>());
     }
 
+
     public Node(String id){
         this(id, 0, new ArrayList<SignalInformation>());
     }
@@ -72,6 +79,7 @@ public class Node {
     public String getId() {
         return id;
     }
+
 
     public void setId(String id) {
         this.id = id;
@@ -83,6 +91,14 @@ public class Node {
 
     public void setzValue(float zValue) {
         this.zValue = zValue;
+    }
+
+    public ArrayList<WayPoint> getWay() {
+        return way;
+    }
+
+    public void setWay(ArrayList<WayPoint> way) {
+        this.way = way;
     }
 
     public List<SignalInformation> getSignalInformationList() {

@@ -85,7 +85,7 @@ public class SensorData {
 
 
             if (calibrate == true) {
-                Log.d("Magnet","Drin: "+prssureValue);
+             //   Log.d("Magnet","Drin: "+prssureValue);
 
                 nullPressure = prssureValue;
                 calibrate = false;

@@ -13,8 +13,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
+import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.graph.Node;
 
 public class Compass2Activity extends AppCompatActivity {
 
@@ -40,12 +44,16 @@ public class Compass2Activity extends AppCompatActivity {
     // private float nullPressure = 0.0f;
     private static final String TAG = "Magnet";
 
-    //WayPointListe
+    //WayPointListe = define a Way
     private ArrayList<WayPoint> listWayPoint = new ArrayList<>();
     private int index;
 
-    //MagnetBerechnung
+    //MagnetCalculation
     SensorData sensorDaten = new SensorData();
+
+    // ID of ParentNode to save the "WayPoit" as a way
+    private String parentNodeId;
+    private Node parentNode;
 
 
 
@@ -54,6 +62,7 @@ public class Compass2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compass2);
+
 
         textViewX = (TextView) findViewById(R.id.txtCompassX);
         textViewSteps = (TextView) findViewById(R.id.txtCompassY);
@@ -75,11 +84,24 @@ public class Compass2Activity extends AppCompatActivity {
         //MagnetSensor
         magnetSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+        // ID of ParentNode to save the "WayPoit" as a way
+        Bundle extra=getIntent().getExtras();
+        //
+
+        //get the parent Node to store the data
+        parentNodeId=extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
+        parentNode = MainActivity.graph.getNodeById(parentNodeId);
 
         Log.d(TAG, "Magnet Klasse");
+        Log.d(TAG,"Ausgabe Node: "+ parentNode.getId());
 
 
     }
+
+    /**
+     * Listener for the compass, use the magnetic field sensor and the accelometer to find the
+     * right direction.
+     */
 
     private SensorEventListener magnetListener = new SensorEventListener() {
 
@@ -105,7 +127,9 @@ public class Compass2Activity extends AppCompatActivity {
     };
 
 
-
+    /**
+     * Listener for the pressure sensor, is used to calculate the high to a defined point.
+     */
     private SensorEventListener pressureStepListner = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -145,7 +169,7 @@ public class Compass2Activity extends AppCompatActivity {
     public void onClickDefineWay(View view) {
 
 
-        Log.d(TAG, "mode: " + mod);
+        //Log.d(TAG, "mode: " + mod);
 
         if (mod % 2 == 0) {
             buttonDefineWay.setText("Stop define way");
@@ -155,7 +179,15 @@ public class Compass2Activity extends AppCompatActivity {
         if (mod % 2 > 0) {
             buttonDefineWay.setText("Start define way");
             onClickDefineWay = false;
-            // listOfWays.addWay("test",listWayPoint);
+
+            //
+
+            LinkedHashMap<String,ArrayList<WayPoint>> thisWay= new LinkedHashMap<>();
+           // thisWay.put("test",listWayPoint);
+            MainActivity.graph.getNodeById(parentNodeId).setWay(listWayPoint);
+
+
+            Log.d(TAG,"Way: "+parentNode.getWay());
 
 
         }
@@ -167,10 +199,15 @@ public class Compass2Activity extends AppCompatActivity {
         return listWayPoint;
     }
 
+    /**
+     * Show you the list of saved WayPoints
+     * @param view
+     */
     public void onClickShowList(View view) {
 
-        for (WayPoint s : listWayPoint) {
-            textViewListe.setText(textViewListe.getText() + s.toString() + System.lineSeparator());
+      //  ArrayList<WayPoint>ausgabe=parentNode.getWay().get("test");
+        for (WayPoint s : MainActivity.graph.getNodeById(parentNodeId).getWay()) {
+            textViewListe.setText(parentNodeId+textViewListe.getText() + s.toString() + System.lineSeparator());
 
 
         }
@@ -208,7 +245,7 @@ public class Compass2Activity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         pressureSensorManager.unregisterListener(pressureStepListner);
-        //magnetSensorManager.unregisterListener(magnetListener);
+        magnetSensorManager.unregisterListener(magnetListener);
         stepSensorManager.unregisterListener(pressureStepListner);
     }
 

@@ -13,7 +13,7 @@
 
 
     <Button
-        android:text="Kompass/Höhe"
+        android:text="Kompass/Höhe/Schritte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -23,14 +23,5 @@
         android:id="@+id/btnGotoCompass"
         android:onClick="onClickCompass"/>
 
-
-    <Button
-        android:text="Schrittzähler"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnGotoCompass"
-        android:layout_alignEnd="@+id/btnGotoCompass"
-        android:id="@+id/btnGotoStepCounter"
-        android:onClick="onClickStepCounter"/>
 
 </RelativeLayout>
