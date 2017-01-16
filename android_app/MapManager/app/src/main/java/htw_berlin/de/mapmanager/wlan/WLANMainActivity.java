@@ -1,8 +1,11 @@
 package htw_berlin.de.mapmanager.wlan;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +43,95 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
     private Node parentNode;
     private Button saveJsonButton;
     private PermissionManager permissionManager;
+    private AlertDialog alertDialog;
+    private AlertDialog.Builder builder;
+
+    private class AsyncSave extends AsyncTask<Integer,Integer,Integer>
+    {
+        boolean isCancelPressed = false;
+
+        @Override
+        protected Integer doInBackground(Integer... params) {
+            Thread t = new Thread(new Runnable(){
+
+                int waitMilliseconds = 1000;
+
+                @Override
+                public void run() {
+                    try {
+                        synchronized (this) {
+                            wait(waitMilliseconds);
+                            scanAgain();
+                            refresh();
+                        }
+                    } catch (InterruptedException ex) {}
+                }
+            });
+            List<Node.SignalInformation> backupList = parentNode.getSignalInformationList();
+            List<Node.SignalInformation> signalList= parentNode.getSignalInformationList();
+            Integer maximum = 20;
+            for(int i = 0; i<maximum;i++)
+            {
+                Date d = new Date();
+                List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
+                List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
+                for (ScanResult sr : scanResults) {
+                    if (sr.SSID.equals("iii")) {
+                        Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
+                        signalStrengthList.add(signalStrengthEntry);
+                    }
+                }
+                signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
+                publishProgress(i,maximum);
+                if(isCancelPressed)
+                {
+                    return null;
+                }
+                t.run();
+
+            }
+            parentNode.setSignalInformationList(signalList);
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            WLANMainActivity.this.builder = new AlertDialog.Builder(WLANMainActivity.this);
+            WLANMainActivity.this.builder.setMessage("Progress Status init");
+            WLANMainActivity.this.builder.setTitle("Progress Status");
+            WLANMainActivity.this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    isCancelPressed = true;
+                }
+            });
+            WLANMainActivity.this.alertDialog = builder.create();
+            WLANMainActivity.this.alertDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            WLANMainActivity.this.alertDialog.dismiss();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            WLANMainActivity.this.alertDialog.setMessage(values[0].toString()+" von "+values[1].toString());
+        }
+
+        @Override
+        protected void onCancelled(Integer integer) {
+            super.onCancelled(integer);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +200,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if(v == saveIntervall){
-            this.saveIntervallInNode();
+            new AsyncSave().execute(1);
         }
 
     }
