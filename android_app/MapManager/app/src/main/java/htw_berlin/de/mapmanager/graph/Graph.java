@@ -4,8 +4,11 @@ import com.google.gson.annotations.Expose;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import htw_berlin.de.mapmanager.compass.Edge;
 
 /**
  * Created by tognitos
@@ -15,8 +18,12 @@ public class Graph {
     @Expose
     private ArrayList<Node> nodes;
 
+
+    private ArrayList<Edge> edges;
+
     public Graph() {
         this.nodes = new ArrayList<>();
+        this.edges= new ArrayList<>();
     }
 
     /**
@@ -38,6 +45,24 @@ public class Graph {
         return this.nodes.add(node);
     }
 
+    /**
+     * Add a edge to the Graph
+     *
+     * @param addEdge
+     * @return
+     */
+    public boolean addEdge(Edge addEdge){
+        final String addEdgeId = addEdge.getId();
+        for(Edge presentEdge:edges){
+            if(presentEdge.getId().equals(addEdgeId)){
+                // do not add
+                return false;
+            }
+        }
+        return this.edges.add(addEdge);
+
+    }
+
     public void removeNode(Node toDelete){
         // remove reference from all edges
         for(String connectedId : toDelete.getEdges().keySet()){
@@ -57,6 +82,22 @@ public class Graph {
         for(Node node: nodes){
             if(node.getId().equals(nodeId)){
                 return node;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get you the Edge between two POI`s
+     * @param nodeIdA,nodeIdB
+     * @return
+     */
+    public Edge getEdgeNodeId(String nodeIdA,String nodeIdB){
+        for(Edge s: edges){
+            if((s.getPoiA().equals(nodeIdA))&&(s.getPoiB().equals(nodeIdB))||
+                    (s.getPoiA().equals(nodeIdB))&&(s.getPoiB().equals(nodeIdA))){
+                return s;
             }
         }
 

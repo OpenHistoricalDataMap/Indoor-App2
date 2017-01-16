@@ -11,7 +11,7 @@ import android.widget.Button;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.compass.Compass2Activity;
-import htw_berlin.de.mapmanager.compass.StepCountActivity;
+
 
 public class DefineEdgeActivity extends AppCompatActivity {
 
@@ -23,18 +23,21 @@ public class DefineEdgeActivity extends AppCompatActivity {
     // TODO remove unused mgr?
     SensorManager mgr;
     Button step,compass;
-
+// Id of the destination Node
+    public static final String POI_ID_DESTINATION="POI_ID_DESTINATION";
     private String parentNodeId;
+    private String destinationNodeId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_define_edge);
-        Log.d(LOG_TAG,"Aufruf main");
+
 
         Bundle extra = getIntent().getExtras();
         parentNodeId= extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
+        destinationNodeId=extra.getString(POI_ID_DESTINATION);
 
         compass=(Button)findViewById(R.id.btnGotoCompass);
       //  step =(Button)findViewById(R.id.btnGotoStepCounter);
@@ -45,6 +48,7 @@ public class DefineEdgeActivity extends AppCompatActivity {
     public void onClickCompass(View view){
         Intent intent =new Intent(this,Compass2Activity.class);
         intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,parentNodeId);
+        intent.putExtra(POI_ID_DESTINATION,destinationNodeId);
         startActivity(intent);
 
     }

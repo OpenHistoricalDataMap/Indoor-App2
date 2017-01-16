@@ -22,8 +22,11 @@ import htw_berlin.de.mapmanager.graph.Node;
 
 public class Compass2Activity extends AppCompatActivity {
 
-    private TextView textViewX, textViewSteps, textViewZ, textViewListe;
+    private TextView textViewX, textViewDistance, textViewZ, textViewListe;
     private Button calibrationButton, buttonDefineWay;
+
+    //Everage euro step length
+    private static final float EURO_STEP_LENGTH= 0.74f;
 
 
     //StepCount onSensorChange
@@ -39,7 +42,8 @@ public class Compass2Activity extends AppCompatActivity {
 
     private int mod = 0;
 
-    //  private float highOverSee = 0.0f;
+    //Steps in meter
+    private float stpsInMeter;
 
     // private float nullPressure = 0.0f;
     private static final String TAG = "Magnet";
@@ -55,6 +59,14 @@ public class Compass2Activity extends AppCompatActivity {
     private String parentNodeId;
     private Node parentNode;
 
+    // ID of destiantionNode
+    private String destinationNodeID;
+    private Node destinationNode;
+
+    //Edge to save in graph. Defined a way between to POI`s
+    private Edge edge;
+
+
 
 
 
@@ -65,7 +77,7 @@ public class Compass2Activity extends AppCompatActivity {
 
 
         textViewX = (TextView) findViewById(R.id.txtCompassX);
-        textViewSteps = (TextView) findViewById(R.id.txtCompassY);
+        textViewDistance = (TextView) findViewById(R.id.txtCompassY);
         textViewZ = (TextView) findViewById(R.id.txtCompassZ);
         textViewListe = (TextView) findViewById(R.id.txtViewListe);
         calibrationButton = (Button) findViewById(R.id.btnCalibrate);
@@ -92,10 +104,20 @@ public class Compass2Activity extends AppCompatActivity {
         parentNodeId=extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
         parentNode = MainActivity.graph.getNodeById(parentNodeId);
 
+        //get the destination Node
+        destinationNodeID=extra.getString(DefineEdgeActivity.POI_ID_DESTINATION);
+        destinationNode = MainActivity.graph.getNodeById(destinationNodeID);
+
         Log.d(TAG, "Magnet Klasse");
-        Log.d(TAG,"Ausgabe Node: "+ parentNode.getId());
+        Log.d(TAG,"Ausgabe ParentNode: "+ parentNode.getId());
+        Log.d(TAG,"Ausgabe DestinationNode: "+ destinationNode.getId());
 
 
+        LinkedHashMap <String , Integer> test=parentNode.getEdges();
+        for(Integer s:test.values())
+        {
+            Log.d(TAG,"Ausagabe Edge: "+test.get(s));
+        }
     }
 
     /**
@@ -137,7 +159,7 @@ public class Compass2Activity extends AppCompatActivity {
             if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
 
                 sensorDaten.setPrssureValue(event.values[0]);
-                Log.d(TAG, "" + sensorDaten.getPrssureValue());
+               // Log.d(TAG, "" + sensorDaten.getPrssureValue());
                 sensorDaten.calcHigh();
                 textViewZ.setText("Höhe über Null " + sensorDaten.getHighOverSee());
             }
@@ -145,7 +167,9 @@ public class Compass2Activity extends AppCompatActivity {
 
                 stepCount = event.values[0];
                 stepView = stepCount - stepVar;
-                textViewSteps.setText("Schritte: " + stepView);
+                //Calculate to meter
+                stpsInMeter=stepView*EURO_STEP_LENGTH;
+                textViewDistance.setText("Meter: " + stpsInMeter);
                 if (stepView % 2 == 0 && onClickDefineWay) {
                     defineWay();
                 }
@@ -161,7 +185,10 @@ public class Compass2Activity extends AppCompatActivity {
     public void onClickCalibrationButton(View view) {
         stepVar = stepCount;
         stepView = stepCount - stepVar;
-        textViewSteps.setText("Schritte:" + stepView);
+        stpsInMeter=0.0f;
+        listWayPoint=new ArrayList<>();
+        edge=null;
+        textViewDistance.setText("Schritte:" + stpsInMeter);
         sensorDaten.setCalibration(true);
 
     }
@@ -182,12 +209,13 @@ public class Compass2Activity extends AppCompatActivity {
 
             //
 
-            LinkedHashMap<String,ArrayList<WayPoint>> thisWay= new LinkedHashMap<>();
-           // thisWay.put("test",listWayPoint);
-            MainActivity.graph.getNodeById(parentNodeId).setWay(listWayPoint);
+            edge=new Edge(stpsInMeter,parentNodeId,destinationNodeID,
+                    parentNodeId+destinationNodeID,listWayPoint);
+         MainActivity.graph.addEdge(edge);
+           // MainActivity.graph.getNodeById(parentNodeId).setWay(listWayPoint);
 
 
-            Log.d(TAG,"Way: "+parentNode.getWay());
+            Log.d(TAG,"Way: "+MainActivity.graph.getEdgeNodeId(parentNodeId,destinationNodeID));
 
 
         }
@@ -195,9 +223,7 @@ public class Compass2Activity extends AppCompatActivity {
 
 
     }
-    public ArrayList<WayPoint> getListWayPoint() {
-        return listWayPoint;
-    }
+
 
     /**
      * Show you the list of saved WayPoints
@@ -205,12 +231,8 @@ public class Compass2Activity extends AppCompatActivity {
      */
     public void onClickShowList(View view) {
 
-      //  ArrayList<WayPoint>ausgabe=parentNode.getWay().get("test");
-        for (WayPoint s : MainActivity.graph.getNodeById(parentNodeId).getWay()) {
-            textViewListe.setText(parentNodeId+textViewListe.getText() + s.toString() + System.lineSeparator());
+      textViewListe.setText("Liste: "+MainActivity.graph.getEdgeNodeId(parentNodeId,destinationNodeID));
 
-
-        }
     }
 
     public void defineWay() {
@@ -248,6 +270,7 @@ public class Compass2Activity extends AppCompatActivity {
         magnetSensorManager.unregisterListener(magnetListener);
         stepSensorManager.unregisterListener(pressureStepListner);
     }
+
 
 
 

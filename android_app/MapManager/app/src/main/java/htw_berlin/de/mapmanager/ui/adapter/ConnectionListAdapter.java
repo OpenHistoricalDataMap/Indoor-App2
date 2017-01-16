@@ -1,6 +1,7 @@
 package htw_berlin.de.mapmanager.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
     private final Node parentNode;
     private ArrayList<Node> dataSet;
     private int lastPosition = -1;
+
+
 
 
 
@@ -122,6 +125,8 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         // define edge button action
         final Intent intent = new Intent(getContext(), DefineEdgeActivity.class);
         intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.getId());
+        //Give the DefineEdgeActivity the ID of the destination Node
+        intent.putExtra(DefineEdgeActivity.POI_ID_DESTINATION, node.getId());
         viewHolder.defineEdge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
