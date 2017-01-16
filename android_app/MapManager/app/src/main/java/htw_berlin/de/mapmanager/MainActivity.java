@@ -31,11 +31,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView listView;
     private TextView poiNameTextView;
 
-    // TODO move this to PersistenceManager, make non-static
-    public static Gson gson;
-
     private PermissionManager permissionManager;
-    private PersistenceManager persistenceManager;
+    public PersistenceManager persistenceManager;
 
     private static final String LOG_TAG = "MainActivity";
 
@@ -56,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         try {
-            graph = persistenceManager.loadGraph();
+            graph = PersistenceManager.loadGraph();
         } catch (FileNotFoundException e) {
             // data not loaded, create a new graph
             graph = emptyGraph();
