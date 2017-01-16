@@ -16,6 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
@@ -119,12 +122,55 @@ public class PersistenceManager {
         final JsonWriter writer = new JsonWriter(new FileWriter(getGraphFile()));
         gson.toJson(graph, Graph.class, writer);
 
-        System.out.println(gson.toJson(graph, Graph.class));
+        //System.out.println(gson.toJson(graph, Graph.class));
 
         writer.flush();
         writer.close();
 
         return true;
+    }
+
+    /**
+     * Stores the node to a file with the name of the node and its storage
+     * date and time
+     * @param node
+     * @throws IOException
+     * @throws WritePermissionException
+     */
+    public void storeNodeMeasurements(Node node) throws IOException, WritePermissionException, ReadPermissionException {
+        if(!this.permissionManager.isWriteExternalAllowed()){
+            Log.e(LOG_TAG, "Permissions were never requested for this permission manager. \n Make sure to have called checkExternalWritePermissions(). Aborting storeNodeMeasurements()...");
+            throw new WritePermissionException("Write permissions denied");
+        }
+
+        if (!isExternalStorageReadable()) {
+            Log.e(LOG_TAG, "not readable");
+            throw new ReadPermissionException("Read permission denied");
+        }
+
+        if (!isExternalStorageWritable()) {
+            System.err.println("not writable");
+            // TODO: probably should not continue writing if storage is not writable --> throw IOException?
+        }
+
+        final JsonWriter writer = new JsonWriter(new FileWriter(getNodeMeasurementsFile(node)));
+        gson.toJson(node, Node.class, writer);
+
+        writer.flush();
+        writer.close();
+    }
+
+    /**
+     * File to save the whole node data to
+     * @param node
+     * @return
+     */
+    private File getNodeMeasurementsFile(Node node) {
+        String timeInfo =  new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+        String filename = node.getId() + "_" + timeInfo + ".json";
+        Log.d(LOG_TAG, filename);
+        System.out.println(filename);
+        return new File(getGraphStorageDir(), filename);
     }
 
     public static Graph loadGraph() throws FileNotFoundException {
