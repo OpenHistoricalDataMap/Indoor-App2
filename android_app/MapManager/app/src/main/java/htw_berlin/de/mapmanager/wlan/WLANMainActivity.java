@@ -29,12 +29,17 @@ import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.persistence.ReadPermissionException;
+import htw_berlin.de.mapmanager.persistence.WritePermissionException;
 
 
 public class WLANMainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private Node parentNode;
+    private Button saveJsonButton;
+    private PermissionManager permissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,24 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         button = (Button) this.findViewById(R.id.saveIntervall);
         button.setOnClickListener(this);
+
+        // Tognimat persisting node with measurements
+        saveJsonButton = (Button) this.findViewById(R.id.saveJSON);
+        saveJsonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    final PersistenceManager persistenceManager = new PersistenceManager(permissionManager);
+                    persistenceManager.storeNodeMeasurements(parentNode);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (WritePermissionException e) {
+                    e.printStackTrace();
+                } catch (ReadPermissionException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void initNode()
@@ -69,7 +92,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void initPermissions(){
-        PermissionManager permissionManager = new PermissionManager(this);
+        permissionManager = new PermissionManager(this);
         permissionManager.checkWifiPermissions();
         permissionManager.checkExternalReadPermissions();
         permissionManager.checkExternalWritePermissions();

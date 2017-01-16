@@ -21,6 +21,7 @@ public class Node {
     float zValue;
 
     @Expose
+    // TODO Florian fhausler Hausler: change Integer to Streak or Path or "Strecke" or whatsoever
     private LinkedHashMap<String, Integer> edges; // <toNodeId, meters>, Linked preserves order
 
     private ArrayList<WayPoint> way = new ArrayList<>();
