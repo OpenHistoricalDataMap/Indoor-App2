@@ -1,12 +1,23 @@
 package htw_berlin.de.mapmanager.compass;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by florianhausler on 19.12.16.
  */
 
 public class WayPoint {
+
+
+    @Expose
     private float direction;
+
+
+    @Expose
     private float distance;
+
+
+    @Expose
     private float high;
 
     public void setDirection(float direction) {
@@ -34,6 +45,8 @@ public class WayPoint {
         return high;
     }
 
+
+     @Override
     public String toString(){
         return "WayPoint: Distance: "+distance+" Direction: "+direction+" High: "+high;
     }

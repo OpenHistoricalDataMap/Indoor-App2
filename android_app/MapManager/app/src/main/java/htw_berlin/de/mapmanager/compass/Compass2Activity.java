@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,7 +45,7 @@ public class Compass2Activity extends AppCompatActivity {
     private int mod = 0;
 
     //Steps in meter
-    private float stpsInMeter;
+    private float stpsInMeter=0;
 
     // private float nullPressure = 0.0f;
     private static final String TAG = "Magnet";
@@ -56,15 +58,15 @@ public class Compass2Activity extends AppCompatActivity {
     SensorData sensorDaten = new SensorData();
 
     // ID of ParentNode to save the "WayPoit" as a way
-    private String parentNodeId;
+    private String parentNodeId="";
     private Node parentNode;
 
     // ID of destiantionNode
-    private String destinationNodeID;
+    private String destinationNodeID="";
     private Node destinationNode;
 
-    //Edge to save in graph. Defined a way between to POI`s
-    private Edge edge;
+
+
 
 
 
@@ -187,9 +189,9 @@ public class Compass2Activity extends AppCompatActivity {
         stepView = stepCount - stepVar;
         stpsInMeter=0.0f;
         listWayPoint=new ArrayList<>();
-        edge=null;
         textViewDistance.setText("Schritte:" + stpsInMeter);
-        sensorDaten.setCalibration(true);
+        calibrationButton.setClickable(false);
+
 
     }
 
@@ -209,9 +211,10 @@ public class Compass2Activity extends AppCompatActivity {
 
             //
 
-            edge=new Edge(stpsInMeter,parentNodeId,destinationNodeID,
-                    parentNodeId+destinationNodeID,listWayPoint);
-         MainActivity.graph.addEdge(edge);
+
+            //edge=new Edge(stpsInMeter,parentNodeId,destinationNodeID,
+              //      parentNodeId+destinationNodeID,listWayPoint);
+         MainActivity.graph.addEdge(new Edge(stpsInMeter,parentNodeId,destinationNodeID,parentNodeId+destinationNodeID,listWayPoint));
            // MainActivity.graph.getNodeById(parentNodeId).setWay(listWayPoint);
 
 
@@ -233,6 +236,10 @@ public class Compass2Activity extends AppCompatActivity {
 
       textViewListe.setText("Liste: "+MainActivity.graph.getEdgeNodeId(parentNodeId,destinationNodeID));
 
+    }
+
+    public void onClickSetHighNull(View view){
+        sensorDaten.setCalibration(true);
     }
 
     public void defineWay() {

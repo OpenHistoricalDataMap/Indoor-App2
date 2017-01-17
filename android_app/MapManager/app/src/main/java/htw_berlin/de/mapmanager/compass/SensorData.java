@@ -4,6 +4,8 @@ package htw_berlin.de.mapmanager.compass;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import htw_berlin.de.mapmanager.MainActivity;
+
 /**
  * Created by florianhausler on 23.12.16.
  */
@@ -12,8 +14,8 @@ public class SensorData {
     private float[] mGravity;
     private float[] mGeomagnetic;
     private float azimut;
-    private float prssureValue = 0.0f;
-    private float nullPressure;
+    private float prssureValue ;
+    //private float nullPressure= MainActivity.nullPressure;
     private float highOverSee;
     private boolean calibrate=false;
 
@@ -87,12 +89,12 @@ public class SensorData {
             if (calibrate == true) {
              //   Log.d("Magnet","Drin: "+prssureValue);
 
-                nullPressure = prssureValue;
+                MainActivity.nullPressure = prssureValue;
                 calibrate = false;
             }
 
 
-            highOverSee = SensorManager.getAltitude(nullPressure, prssureValue);
+            highOverSee = SensorManager.getAltitude(MainActivity.nullPressure , prssureValue);
     }
 
 

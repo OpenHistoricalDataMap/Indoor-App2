@@ -19,6 +19,9 @@ public class Graph {
     private ArrayList<Node> nodes;
 
 
+
+
+    @Expose
     private ArrayList<Edge> edges;
 
     public Graph() {

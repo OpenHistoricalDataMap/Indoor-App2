@@ -24,7 +24,7 @@ public class Node {
     // TODO Florian fhausler Hausler: change Integer to Streak or Path or "Strecke" or whatsoever
     private LinkedHashMap<String, Integer> edges; // <toNodeId, meters>, Linked preserves order
 
-    private ArrayList<WayPoint> way = new ArrayList<>();
+    //private ArrayList<WayPoint> way = new ArrayList<>();
 
 
 
@@ -94,13 +94,13 @@ public class Node {
         this.zValue = zValue;
     }
 
-    public ArrayList<WayPoint> getWay() {
+   /* public ArrayList<WayPoint> getWay() {
         return way;
-    }
+    }*/
 
-    public void setWay(ArrayList<WayPoint> way) {
+   /* public void setWay(ArrayList<WayPoint> way) {
         this.way = way;
-    }
+    }*/
 
     public List<SignalInformation> getSignalInformationList() {
         return signalInformationList;

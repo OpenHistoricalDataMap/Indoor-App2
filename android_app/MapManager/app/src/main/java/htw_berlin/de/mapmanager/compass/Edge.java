@@ -1,5 +1,7 @@
 package htw_berlin.de.mapmanager.compass;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
 
 import htw_berlin.de.mapmanager.graph.Node;
@@ -10,12 +12,23 @@ import htw_berlin.de.mapmanager.graph.Node;
 
 public class Edge {
 
+
+
+    @Expose
     private float cost;
+
+
+
+    @Expose
     private String poiA;
+
+    @Expose
     private String poiB;
 
+    @Expose
+    private ArrayList<WayPoint> way;
 
-
+    @Expose
     private String id=poiA+poiB;
 
     public Edge(float cost, String poiA, String poiB, String id, ArrayList<WayPoint> way) {
@@ -34,7 +47,7 @@ public class Edge {
         this.id = id;
     }
 
-    private ArrayList<WayPoint> way;
+
 
     public ArrayList<WayPoint> getWay() {
         return way;
@@ -68,7 +81,7 @@ public class Edge {
         this.poiB = poiB;
     }
 
-    @Override
+
     public String toString() {
         return "Edge{" +
                 "cost=" + cost +

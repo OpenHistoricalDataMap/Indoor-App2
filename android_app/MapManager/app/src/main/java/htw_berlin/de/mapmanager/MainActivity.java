@@ -26,6 +26,7 @@ import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";
     public static Graph graph;
+    public static float nullPressure=0;
     private PoiListAdapter adapter;
     private Button newPoiButton;
     private ListView listView;
