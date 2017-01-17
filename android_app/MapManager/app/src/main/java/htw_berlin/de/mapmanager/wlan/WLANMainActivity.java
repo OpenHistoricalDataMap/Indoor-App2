@@ -395,13 +395,13 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         });
         List<Node.SignalInformation> backupList = parentNode.getSignalInformationList();
         List<Node.SignalInformation> signalList= parentNode.getSignalInformationList();
-        for(int i = 0; i<20;i++)
+        for(int i = 0; i<180;i++)
         {
             Date d = new Date();
             List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
             List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
             for (ScanResult sr : scanResults) {
-                if (sr.SSID.equals("iii")) {
+                if (sr.SSID.equals("BVG-Wifi")) {
                     Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
                     signalStrengthList.add(signalStrengthEntry);
                 }
