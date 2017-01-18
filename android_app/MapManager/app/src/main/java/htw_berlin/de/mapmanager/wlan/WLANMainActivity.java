@@ -43,83 +43,73 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
     private Node parentNode;
     private Button saveJsonButton;
     private PermissionManager permissionManager;
-    private AlertDialog alertDialog;
-    private AlertDialog.Builder builder;
+    private boolean isCancelPressed = false;
+    private Integer current = 0, total = 180;
 
     private class AsyncSave extends AsyncTask<Integer,Integer,Integer>
     {
-        boolean isCancelPressed = false;
+
+        private AlertDialog.Builder builder;
+        private AlertDialog alertDialog;
+        int waitMilliseconds = 1000;
 
         @Override
         protected Integer doInBackground(Integer... params) {
-            Thread t = new Thread(new Runnable(){
-
-                int waitMilliseconds = 1000;
-
-                @Override
-                public void run() {
-                    try {
-                        synchronized (this) {
-                            wait(waitMilliseconds);
-                            scanAgain();
-                            refresh();
-                        }
-                    } catch (InterruptedException ex) {}
-                }
-            });
-            List<Node.SignalInformation> backupList = parentNode.getSignalInformationList();
-            List<Node.SignalInformation> signalList= parentNode.getSignalInformationList();
-            Integer maximum = 20;
-            for(int i = 0; i<maximum;i++)
+            List<Node.SignalInformation> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
+            List<Node.SignalInformation> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
+            Integer count = 0;
+            Integer max = 180;
+            for(count = 0; count <max;count++)
             {
                 Date d = new Date();
                 List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
                 List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
                 for (ScanResult sr : scanResults) {
-                    if (sr.SSID.equals("iii")) {
+                    if (sr.SSID.equals("BVG-Wifi")) {
                         Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
                         signalStrengthList.add(signalStrengthEntry);
                     }
                 }
                 signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
-                publishProgress(i,maximum);
-                if(isCancelPressed)
-                {
-                    return null;
+                try{
+                    Thread.sleep(1000);
+                    scanAgain();
+                    publishProgress(count,max);
                 }
-                t.run();
-
+                catch(InterruptedException e){
+                    break;
+                }
             }
-            parentNode.setSignalInformationList(signalList);
-
+            WLANMainActivity.this.parentNode.setSignalInformationList(signalList);
             return null;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            WLANMainActivity.this.builder = new AlertDialog.Builder(WLANMainActivity.this);
-            WLANMainActivity.this.builder.setMessage("Progress Status init");
-            WLANMainActivity.this.builder.setTitle("Progress Status");
-            WLANMainActivity.this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
+            this.builder = new AlertDialog.Builder(WLANMainActivity.this);
+            this.builder.setMessage("Progress Status init");
+            this.builder.setTitle("Progress Status");
+            this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    isCancelPressed = true;
+                    WLANMainActivity.this.isCancelPressed = true;
                 }
             });
-            WLANMainActivity.this.alertDialog = builder.create();
-            WLANMainActivity.this.alertDialog.show();
+            this.alertDialog = builder.create();
+            this.alertDialog.show();
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-            WLANMainActivity.this.alertDialog.dismiss();
+            this.alertDialog.hide();
+            this.alertDialog.dismiss();
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            WLANMainActivity.this.alertDialog.setMessage(values[0].toString()+" von "+values[1].toString());
+            this.alertDialog.setMessage(values[0].toString()+" von "+values[1].toString());
         }
 
         @Override
@@ -141,6 +131,8 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         initNode();
 
         ThatApp.initThatApp(this);
+
+
 
         setContentView(R.layout.activity_wlan_main);
 
@@ -203,6 +195,63 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
             new AsyncSave().execute(1);
         }
 
+    }
+
+    public static void saveIntervallInNode(Node pNode)
+    {
+        List<Node.SignalInformation> backupList = pNode.getSignalInformationList();
+        List<Node.SignalInformation> signalList= pNode.getSignalInformationList();
+        for(int i = 0; i < 120;i++)
+        {
+            Date d = new Date();
+            List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
+            List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
+            for (ScanResult sr : scanResults) {
+                if (sr.SSID.equals("BVG-Wifi")) {
+                    Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
+                    signalStrengthList.add(signalStrengthEntry);
+                }
+            }
+            signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
+            try{
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException e){
+                break;
+            }
+        }
+        pNode.setSignalInformationList(signalList);
+    }
+
+    public void refresh() {
+        TextView tv_connectedWLAN = (TextView) this.findViewById(R.id.connectedWLAN);
+        tv_connectedWLAN.setText("nix");
+
+        TextView tv = (TextView) this.findViewById(R.id.textView);
+        tv.setText("nix");
+
+        try {
+            WifiInfo connectionInfo = ThatApp.getThatApp().getWifiManager().getConnectionInfo();
+            if(connectionInfo != null) {
+                String infoString = "connected W-LAN: ";
+
+                infoString += "\nBSSID: ";
+                infoString += connectionInfo.getBSSID();
+
+                infoString += "\nMacAddress: ";
+                infoString += connectionInfo.getMacAddress();
+
+                infoString += "\nSSID: ";
+                infoString += connectionInfo.getSSID();
+
+                tv_connectedWLAN.setText(infoString);
+
+                ThatApp.getThatApp().printScan();
+            }
+        }
+        catch (Exception e) {
+            tv.setText("Exception: " + e.getLocalizedMessage());
+        }
     }
 
     public void scanAgain() {
@@ -468,71 +517,5 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void saveIntervallInNode()
-    {
-        Thread t = new Thread(new Runnable(){
 
-            int waitMilliseconds = 1000;
-
-            @Override
-            public void run() {
-                try {
-                    synchronized (this) {
-                        wait(waitMilliseconds);
-                        scanAgain();
-                        refresh();
-                    }
-                } catch (InterruptedException ex) {}
-            }
-        });
-        List<Node.SignalInformation> backupList = parentNode.getSignalInformationList();
-        List<Node.SignalInformation> signalList= parentNode.getSignalInformationList();
-        for(int i = 0; i<20;i++)
-        {
-            Date d = new Date();
-            List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
-            List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
-            for (ScanResult sr : scanResults) {
-                if (sr.SSID.equals("iii")) {
-                    Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
-                    signalStrengthList.add(signalStrengthEntry);
-                }
-            }
-            signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
-            t.run();
-        }
-        parentNode.setSignalInformationList(signalList);
-
-    }
-
-    public void refresh() {
-        TextView tv_connectedWLAN = (TextView) this.findViewById(R.id.connectedWLAN);
-        tv_connectedWLAN.setText("nix");
-
-        TextView tv = (TextView) this.findViewById(R.id.textView);
-        tv.setText("nix");
-
-        try {
-            WifiInfo connectionInfo = ThatApp.getThatApp().getWifiManager().getConnectionInfo();
-            if(connectionInfo != null) {
-                String infoString = "connected W-LAN: ";
-
-                infoString += "\nBSSID: ";
-                infoString += connectionInfo.getBSSID();
-
-                infoString += "\nMacAddress: ";
-                infoString += connectionInfo.getMacAddress();
-
-                infoString += "\nSSID: ";
-                infoString += connectionInfo.getSSID();
-
-                tv_connectedWLAN.setText(infoString);
-
-                ThatApp.getThatApp().printScan();
-            }
-        }
-        catch (Exception e) {
-            tv.setText("Exception: " + e.getLocalizedMessage());
-        }
-    }
 }
