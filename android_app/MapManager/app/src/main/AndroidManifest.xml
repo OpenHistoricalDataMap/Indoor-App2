@@ -51,11 +51,13 @@
 
         <!-- Sensor (Florian) activities -->
         <activity android:name=".compass.DefineEdgeActivity" />
-        <activity android:name=".compass.StepCountActivity" />
+        <!--<activity android:name=".compass.StepCountActivity" />-->
         <activity android:name=".compass.Compass2Activity" />
 
         <!-- WLAN (Christoph) activites -->
         <activity android:name=".wlan.WLANMainActivity" />
+
+        <activity android:name=".prefs.SettingsActivity" />
 
         <receiver
             android:name=".wlan.WLANScanResultsReceiver"

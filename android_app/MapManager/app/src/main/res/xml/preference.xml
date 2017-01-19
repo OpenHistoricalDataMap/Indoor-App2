@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent" android:layout_width="match_parent">
+    <PreferenceCategory
+        android:title="Aufnahme"
+        android:key="pref_offline">
+        <CheckBoxPreference
+            android:key="pref_movingAverage"
+            android:title="Gleitender Mittelwertfilter"
+            android:defaultValue="true" >
+        </CheckBoxPreference>
+        <htw_berlin.de.mapmanager.prefs.ui.EditTextPreference
+            android:defaultValue="3"
+            android:key="pref_movivngAverageOrder"
+            android:title="Ortnung"
+            android:dependency="pref_movingAverage"
+            android:inputType="number"
+            />
+        <CheckBoxPreference
+            android:key="pref_kalman"
+            android:title="Kalman Filter"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Ortung"
+        android:key="pref_online">
+        <CheckBoxPreference
+            android:key="pref_euclideanDistance"
+            android:title="Euklidische Distanz"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="pref_euclideanDistanceReplace"
+            android:title="Fehlende werte ersetzen"
+            android:defaultValue="true"
+            android:dependency="pref_euclideanDistance"/>
+        <CheckBoxPreference
+            android:key="pref_knnAlgorithm"
+            android:title="k-nächster-Nachbar Algorithmus"
+            android:defaultValue="true" />
+        <htw_berlin.de.mapmanager.prefs.ui.EditTextPreference
+            android:defaultValue="3"
+            android:key="pref_knnNeighbours"
+            android:title="k Nachbarn"
+            android:dependency="pref_knnAlgorithm"
+            android:inputType="number"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>
