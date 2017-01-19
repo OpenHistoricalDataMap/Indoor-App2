@@ -94,13 +94,7 @@ public class Node {
         this.zValue = zValue;
     }
 
-   /* public ArrayList<WayPoint> getWay() {
-        return way;
-    }*/
 
-   /* public void setWay(ArrayList<WayPoint> way) {
-        this.way = way;
-    }*/
 
     public List<SignalInformation> getSignalInformationList() {
         return signalInformationList;
