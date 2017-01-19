@@ -1,5 +1,7 @@
 package htw_berlin.de.mapmanager;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,10 +15,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.IOException;
 
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.persistence.ReadPermissionException;
+import htw_berlin.de.mapmanager.persistence.WritePermissionException;
 import htw_berlin.de.mapmanager.wlan.WLANMainActivity;
 
 public class POIDetailsActivity extends AppCompatActivity{
@@ -30,6 +35,7 @@ public class POIDetailsActivity extends AppCompatActivity{
     private Button setConnections;
     private Button btnGoToMeasurement;
     private ImageView currentPOIImage;
+    private Button resetPoi;
 
     private PermissionManager permissionManager;
 
@@ -51,7 +57,6 @@ public class POIDetailsActivity extends AppCompatActivity{
         this.parentNode = MainActivity.graph.getNodeById(poiId);
         setTitle(parentNode.getId());
 
-
         initPermissions();
 
         // TODO: get the ArrayList of images of the POI
@@ -59,6 +64,7 @@ public class POIDetailsActivity extends AppCompatActivity{
         initMeasurements();
         initCamera();
         initSetConnections();
+        initResetPOI();
     }
 
     private void initMeasurements()
@@ -158,6 +164,53 @@ public class POIDetailsActivity extends AppCompatActivity{
             }
         }
     }
+
+    /**
+     * Reset ALL the registered signal information if user presses and confirms with Yes
+     */
+    private void initResetPOI() {
+        resetPoi = (Button) findViewById(R.id.btnResetPoi);
+        resetPoi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                //Yes button clicked
+                                parentNode.getSignalInformationList().clear();
+                                try {
+                                    final PersistenceManager persistenceManager = new PersistenceManager(permissionManager);
+                                    // store the empty measurements
+                                    persistenceManager.storeNodeMeasurements(parentNode);
+                                    // store the graph
+                                    persistenceManager.storeGraph(MainActivity.graph);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (WritePermissionException e) {
+                                    e.printStackTrace();
+                                } catch (ReadPermissionException e) {
+                                    e.printStackTrace();
+                                }
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //No button clicked
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(POIDetailsActivity.this);
+                builder.setMessage("Are you sure?\n This will delete permanently all recorded signals").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+            }
+        });
+    }
+
 
 
 }
