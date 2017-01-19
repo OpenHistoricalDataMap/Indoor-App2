@@ -1,6 +1,9 @@
 package htw_berlin.de.mapmanager.persistence;
 
 
+import android.app.DownloadManager;
+
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -12,18 +15,24 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import htw_berlin.de.mapmanager.MainActivity;
+
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
+
+import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class PersistenceManager {
     public static final String LOG_TAG = "PersistenceManager";
@@ -34,6 +43,7 @@ public class PersistenceManager {
     private static final String POI_PICTURE_NAME = "poi_picture.png";
     private static final String GRAPH_FOLDER = "graph";
     public static final String GRAPH_JSON_NAME = "json_graph.json";
+    private static final String GRAPH_DUMP_FOLDER = "graph_dump";
     private PermissionManager permissionManager;
 
     private static final Gson gson;
@@ -97,13 +107,7 @@ public class PersistenceManager {
         return file;
     }
 
-
-    // TODO: use internal hidden directory for files, then use DownloadManager to transfer this files to the Download folder on an "Export" action
-    public void exportConfiguration(){
-
-    }
-
-    public boolean storeGraph(Graph graph) throws IOException {
+    private boolean storeGraph(Graph graph, File location) throws IOException {
         if(!this.permissionManager.isWriteExternalAllowed()){
             Log.e(LOG_TAG, "Permissions were never requested for this permission manager. \n Make sure to have called checkExternalWritePermissions(). Aborting storeGraph()...");
             return false;
@@ -120,7 +124,7 @@ public class PersistenceManager {
             // TODO: probably should not continue writing if storage is not writable --> throw exception?
         }
 
-        final JsonWriter writer = new JsonWriter(new FileWriter(getGraphFile()));
+        final JsonWriter writer = new JsonWriter(new FileWriter(location));
         gson.toJson(graph, Graph.class, writer);
 
         //System.out.println(gson.toJson(graph, Graph.class));
@@ -129,6 +133,10 @@ public class PersistenceManager {
         writer.close();
 
         return true;
+    }
+
+    public boolean storeGraph(Graph graph) throws IOException {
+        return storeGraph(graph, getGraphFile());
     }
 
     /**
@@ -251,4 +259,81 @@ public class PersistenceManager {
         }
         return false;
     }
+
+    /**
+     * Dumps the graph json file into the GRAPH_DUMP_FOLDER folder in the download folder,
+     * so that it can easily be accessed from a computer.
+     * Attention: sometimes you need to restart your phone to make the files visible from
+     * file explorer from pc (known bug)
+     */
+    // TODO: dump graph in AsyncTask?
+    public void dumpGraph() throws IOException {
+        File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        final File source = getGraphFile();
+        final File dumpDir = new File(downloadDir,GRAPH_DUMP_FOLDER);
+        final File destination = new File(dumpDir, "graph_dump"+(new Date()).getTime());
+
+        if(!dumpDir.exists()){
+            dumpDir.mkdirs();
+        }
+
+        // destination file should not exist, since its name is based on the current timestamp
+        if(!destination.exists()){
+            destination.createNewFile();
+        }
+
+        InputStream inStream = null;
+        OutputStream outStream = null;
+
+        try{
+
+            inStream = new FileInputStream(source);
+            outStream = new FileOutputStream(destination);
+
+            byte[] buffer = new byte[1024];
+
+            int length;
+            //copy the file content in bytes
+
+            while ((length = inStream.read(buffer)) > 0){
+                outStream.write(buffer, 0, length);
+            }
+
+            inStream.close();
+            outStream.close();
+
+
+            Log.d(LOG_TAG, "File is copied successfully");
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        Log.d(LOG_TAG, "Dump terminated");
+
+
+        /*
+        CANNOT USE THIS SYSTEM!
+        It will throw an error because the uri MUST be http:/// or https:/// and is actually file:///
+        // uri and file info
+        final File graphFile = getGraphFile();
+        final String filename = graphFile.getName();
+        final android.net.Uri uri = Uri.fromFile(graphFile);
+
+        // request
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        // to notify when download is complete
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        // if you want to be available from media players
+        request.allowScanningByMediaScanner();
+
+        // getSystemService is a Context method, therefore we access getActivity()
+        DownloadManager manager = (DownloadManager) permissionManager.getActivity().getSystemService(DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        */
+
+
+    }
+
 }

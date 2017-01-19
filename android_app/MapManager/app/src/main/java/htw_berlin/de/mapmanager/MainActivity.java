@@ -83,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent intent = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent);
                 break;
+            case R.id.dump_graph_item:
+                try {
+                    persistenceManager.dumpGraph();
+                } catch (IOException e) {
+                    // dump unsuccessful
+                    e.printStackTrace();
+                }
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -148,4 +148,8 @@ public class PermissionManager implements ActivityCompat.OnRequestPermissionsRes
     }
 
     public boolean isLocationAllowed() { return locationAllowed;}
+
+    public Activity getActivity() {
+        return activity;
+    }
 }
