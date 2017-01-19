@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
     private int lastPosition = -1;
 
     private static final int LAYOUT_LIST_ITEM = R.layout.list_item_poi;
+
 
     // View lookup cache
     private static class ViewHolder {

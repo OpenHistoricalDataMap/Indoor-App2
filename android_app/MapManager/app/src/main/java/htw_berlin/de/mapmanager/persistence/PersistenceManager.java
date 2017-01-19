@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
@@ -159,6 +160,45 @@ public class PersistenceManager {
         writer.flush();
         writer.close();
     }
+
+    /**
+     * Deletes permanently the file used to store all the measurements of the node.
+     * @param node
+     */
+    public void deleteNodeMeasurementsFile(Node node) throws WritePermissionException {
+        if(!this.permissionManager.isWriteExternalAllowed()){
+            Log.e(LOG_TAG, "Permissions were never requested for this permission manager. \n Make sure to have called checkExternalWritePermissions(). Aborting storeNodeMeasurements()...");
+            throw new WritePermissionException("Write permissions denied");
+        }
+
+        if (!isExternalStorageWritable()) {
+            System.err.println("not writable");
+            // TODO: probably should not continue writing if storage is not writable --> throw IOException?
+        }
+
+        File measurementsFile = getNodeMeasurementsFile(node);
+        if(measurementsFile.exists()){
+            measurementsFile.delete();
+        }
+    }
+
+    /**
+     * deletes the node's album of pictures
+     * @param node
+     */
+    public void deleteAlbumStorageDir(Node node){
+        final File albumDir = getAlbumStorageDir(node.getId());
+        if (albumDir.isDirectory())
+        {
+            String[] children = albumDir.list();
+            for (int i = 0; i < children.length; i++)
+            {
+                new File(albumDir, children[i]).delete();
+                Log.d(LOG_TAG, "Deleted " + i);
+            }
+        }
+    }
+
 
     /**
      * File to save the whole node data to
