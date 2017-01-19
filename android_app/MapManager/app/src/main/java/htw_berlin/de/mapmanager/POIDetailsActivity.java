@@ -170,6 +170,7 @@ public class POIDetailsActivity extends AppCompatActivity{
      */
     private void initResetPOI() {
         resetPoi = (Button) findViewById(R.id.btnResetPoi);
+        // TODO: AlertDialog is blocking! Use @cbos method for more!
         resetPoi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
