@@ -28,7 +28,6 @@ import htw_berlin.de.mapmanager.graph.dijkstra.DijkstraAlgorithm;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
-import htw_berlin.de.mapmanager.persistence.ReadPermissionException;
 import htw_berlin.de.mapmanager.persistence.WritePermissionException;
 
 import htw_berlin.de.mapmanager.prefs.SettingsActivity;
@@ -69,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         try {
             graph = PersistenceManager.loadGraph();
         } catch (FileNotFoundException e) {
+            Log.d(LOG_TAG, "Creating empty graph");
             // data not loaded, create a new graph
             graph = emptyGraph();
         }
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     // TODO: cbos dijkstra
-    private void dijkstra(){
+    private void dijkstra() {
         // Construct it just when the graph changes!
         final DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
 
@@ -157,19 +157,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //LinkedList<Node> path = dijkstra.getPath("node_id_of_destination");
         LinkedList<Node> path = dijkstra.getPath("zzz");
 
-        if(path == null){
+        if (path == null) {
             Log.d(LOG_TAG, "No path found");
             Toast.makeText(this, "No path found", Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             Log.d(LOG_TAG, "Path found");
             for (Node node : path) {
                 Log.d(LOG_TAG, node.toString());
             }
         }
-
-
-
     }
 
     /**
@@ -183,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             // Warning! With true --> "override" --> edges will be deleted!!
             boolean added = graph.addNode(new Node(poiName), false);
 
-            if(!added){
+            if (!added) {
                 Toast.makeText(this, "POI Not added. Check if the name already exists and " +
                         "delete the node eventually.", Toast.LENGTH_LONG).show();
             }
