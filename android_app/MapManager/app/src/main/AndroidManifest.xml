@@ -9,6 +9,12 @@
     <!-- To take pictures -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Christoph -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
     <!-- Still to take pictures -->
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -41,7 +47,25 @@
             </intent-filter>
         </activity>
         <activity android:name=".POIDetailsActivity" />
-        <activity android:name=".POIConnectionsActivity"></activity>
+        <activity android:name=".POIConnectionsActivity" />
+
+        <!-- Sensor (Florian) activities -->
+        <activity android:name=".compass.DefineEdgeActivity" />
+        <!--<activity android:name=".compass.StepCountActivity" />-->
+        <activity android:name=".compass.Compass2Activity" />
+
+        <!-- WLAN (Christoph) activites -->
+        <activity android:name=".wlan.WLANMainActivity" />
+
+        <activity android:name=".prefs.SettingsActivity" />
+
+        <receiver
+            android:name=".wlan.WLANScanResultsReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+        </receiver>
+
     </application>
 
 </manifest>

@@ -20,7 +20,7 @@
             android:id="@+id/btnCapture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Take new picture"
+            android:text="Take new \n picture"
             android:layout_alignParentLeft="true"
             android:layout_alignParentBottom="true" />
 
@@ -29,6 +29,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="Set Connections"
+            android:text="Set\nConnections"
             android:layout_alignParentBottom="true"/>
+
+        <Button
+            android:id="@+id/btnMeasurements"
+            android:layout_width="@dimen/activity_horizontal_margin"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/btnCapture"
+            android:layout_toLeftOf="@id/btnSetConnections"
+            android:layout_alignParentBottom="true"
+            android:layout_alignTop="@id/btnCapture"
+            android:text="Messen" />
+
+        <!-- TODO: move it in the option menu as "reset Poi" -->
+        <Button
+            android:id="@+id/btnResetPoi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset POI"
+            android:layout_above="@+id/btnCapture"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:text="Measurements"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btnMeasurements"
+            android:layout_alignRight="@id/btnSetConnections"
+            android:layout_width="130dp"
+            android:layout_alignTop="@+id/btnResetPoi"
+            android:id="@+id/tv_measurements"
+            android:layout_toEndOf="@+id/btnCapture" />
 </RelativeLayout>

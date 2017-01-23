@@ -1,11 +1,13 @@
-package htw_berlin.de.mapmanager;
+package htw_berlin.de.mapmanager.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,15 +15,16 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 public class PoiListAdapter extends ArrayAdapter<Node> {
 
-    private List<Node> dataSet;
     private int lastPosition = -1;
 
-    private static final int LAYOUT_LIST_ITEM = R.layout.poi_list_item;
+    private static final int LAYOUT_LIST_ITEM = R.layout.list_item_poi;
+
 
     // View lookup cache
     private static class ViewHolder {
@@ -30,9 +33,7 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
     }
 
     public PoiListAdapter(List<Node> data, Context context) {
-        super(context, LAYOUT_LIST_ITEM, data);
-        this.dataSet = data;
-
+        super(context, LAYOUT_LIST_ITEM, data); // conversion to list
     }
 
     @Override
@@ -59,13 +60,13 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
 
         lastPosition = position;
 
-        viewHolder.poiName.setText(MainActivity.graph.getNodeAsText(node));
+        viewHolder.poiName.setText(node.getId());
 
         // alternative
         // viewHolder.imageView.setImageBitmap(BitmapFactory.decodeFile(file.getAbsolutePath(), 500, 250));
         //image representation in list
 
-        File nodeImageFile = PersistenceManager.getNodeImageFile(node.id);
+        File nodeImageFile = PersistenceManager.getNodeImageFile(node.getId());
         if(!nodeImageFile.exists()){
             viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
         }
@@ -95,4 +96,5 @@ public class PoiListAdapter extends ArrayAdapter<Node> {
         options.inSampleSize = 8;
         return BitmapFactory.decodeFile(file.getPath(),options);
     }
+
 }

@@ -60,10 +60,10 @@
             android:text="barrierefrei?"/>
         </LinearLayout>
     <Button
-        android:id="@+id/defineEdgeButton"
+        android:id="@+id/btnDefineEdge"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="Strecke definieren"/>
+        android:text="Define route"/>
     </LinearLayout>
 
 </LinearLayout>

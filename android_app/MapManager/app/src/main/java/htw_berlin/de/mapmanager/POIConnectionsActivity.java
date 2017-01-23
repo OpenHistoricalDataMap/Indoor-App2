@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.ui.adapter.ConnectionListAdapter;
 
 public class POIConnectionsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "POIConnectionsActivity";
 
+    private Button defineEdgeButton;
     private ListView listView;
     private ConnectionListAdapter adapter;
 
@@ -34,15 +37,16 @@ public class POIConnectionsActivity extends AppCompatActivity {
 
         // Get information about the connections
         Intent intent = getIntent();
-        int poiId = intent.getIntExtra(MainActivity.EXTRA_MESSAGE_POI_ID, -1);
-        if(poiId == -1){
+        String poiId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_POI_ID);
+        if(poiId == null || poiId == ""){
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
-        this.parentNode = MainActivity.graph.getNodeById(poiId);
-        setTitle(MainActivity.graph.getNodeAsText(parentNode));
+        this.parentNode = MainActivity.graph.getNode(poiId);
+        setTitle(parentNode.getId());
 
         initPermissions();
+
         initListView();
     }
 
@@ -63,8 +67,8 @@ public class POIConnectionsActivity extends AppCompatActivity {
         adapter = new ConnectionListAdapter(parentNode, allOtherNodes, this);
         listView.setAdapter(adapter);
 
-    }
 
+    }
 
 
     @Override

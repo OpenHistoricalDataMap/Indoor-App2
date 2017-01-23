@@ -1,179 +1,177 @@
 package htw_berlin.de.mapmanager.graph;
 
+import com.google.gson.annotations.Expose;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 
-public class Node implements MarkableNode, Dijkstrable {
-	//@SerializedName("id")
-	public final int id;
+import htw_berlin.de.mapmanager.compass.Edge;
+import htw_berlin.de.mapmanager.compass.WayPoint;
 
-	//@SerializedName("edges")
-	private List<Edge> edges;
+/**
+ * Created by Carola Walter
+ * Changed by Christoph Bose, tognitos
+ */
 
-	private Node markedPredecessor;
-	private int markedLength = 0;
+public class Node {
+    @Expose
+    String id;
 
-	public Node(int id) {
-		this.id = id;
-	}
+    @Expose
+    float zValue;
 
-	public void addEdge(Node node, int weight) {
-		if (edges == null)
-			edges = new ArrayList<Edge>();
-		edges.add(new Edge(this, node, weight));
-	}
+    @Expose
+    // TODO Florian fhausler Hausler: change Integer to Streak or Path or "Strecke" or whatsoever
+    private ArrayList<Edge> edges; // <toNodeId, meters>, Linked preserves order
 
-	public List<Edge> getEdges() {
-		if (edges == null)
-			edges = new ArrayList<Edge>();
-		return edges;
-	}
+    //private ArrayList<WayPoint> way = new ArrayList<>();
 
-	public boolean hasEdgeToNode(int nodeId){
-        return getEdgeToNode(nodeId) != null;
+
+
+    @Expose
+    List<SignalInformation> signalInformationList;
+
+
+    public static class SignalInformation {
+        @Expose
+        String timestamp;
+
+        @Expose
+        List<SignalStrengthInformation> signalStrengthInformationList;
+
+        public SignalInformation(String timestamp, List<SignalStrengthInformation> signalStrengthInformationList) {
+            this.timestamp = timestamp;
+            this.signalStrengthInformationList = signalStrengthInformationList;
+        }
     }
 
-    public Edge getEdgeToNode(int nodeId){
-        for(Edge edge:getEdges()){
-            if(edge.getNode2().id == nodeId){
+    public static class SignalStrengthInformation {
+        @Expose
+        String macAdress;
+
+        @Expose
+        int signalStrength;
+
+        public SignalStrengthInformation(String macAdress, int signalStrength) {
+            this.macAdress = macAdress;
+            this.signalStrength = signalStrength;
+        }
+    }
+
+
+    public Node(String id, float zValue, List<SignalInformation> signalInformationList, ArrayList<Edge> edges) {
+        this.id = id;
+        this.zValue = zValue;
+        this.signalInformationList = signalInformationList;
+        this.edges = edges;
+    }
+
+    public Node(String id, float zValue, List<SignalInformation> signalInformationList) {
+        this(id, zValue, signalInformationList, new ArrayList<Edge>());
+    }
+
+
+    public Node(String id){
+        this(id, 0, new ArrayList<SignalInformation>());
+    }
+
+    public void addEdge(Edge edge){
+        if(this.edges.contains(edge)){
+            return;
+        }
+
+        this.edges.add(edge);
+    }
+
+
+    /**
+     *
+     * @param index The index of the DijkstraEdge to retrieve
+     * @return DijkstraEdge The DijkstraEdge at the specified index in this.neighborhood
+     */
+    public Edge getEdge(int index){
+        return this.edges.get(index);
+    }
+
+    /**
+     * Returns the DijkstraEdge between this node and the specified destination node.
+     * @param toNode the destination Node to which this node is connected
+     * @return DijkstraEdge the edge that connects this node to the destination node, or null if there is no edge between
+     */
+    public Edge getEdge(Node toNode){
+        if(toNode == null){
+            return null;
+        }
+
+        for(Edge edge : edges){
+            if(edge.getNeighbor(this).equals(toNode)){
                 return edge;
             }
         }
         return null;
     }
 
-    /**
-     *
-     * @param nodeId
-     * @return true if an element was removed
-     */
-    public boolean removeEdgeToNode(int nodeId) {
-        ListIterator<Edge> iterator = getEdges().listIterator();
-        Edge e;
-        while(iterator.hasNext()){
-            e = iterator.next();
-            if(e.getNode2().id == nodeId){
-                iterator.remove();
-                return true;
-            }
-        }
-        return false;
+    public boolean containsEdge(Edge other){
+        return this.edges.contains(other);
     }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (!(o instanceof Node))
-			return false;
+    public boolean removeEdge(Edge e){
+        return this.edges.remove(e);
+    }
 
-		Node node = (Node) o;
+    public int getEdgesCount(){
+        return this.edges.size();
+    }
 
-		if (id != node.id)
-			return false;
+    /**
+     *
+     * @return copy of edges
+     */
+    public ArrayList<Edge> getEdges() {
+        return new ArrayList<Edge>(edges);
+    }
 
-		return true;
-	}
+    public String getId() {
+        return id;
+    }
 
-	@Override
-	public int hashCode() {
-		return id;
-	}
 
-	/**
-	 * Sets the predecessor node used as mark for this node and sets the total
-	 * length of the path to get to this node
-	 * */
-	@Override
-	public void setPredecessor(MarkableNode predecessor, int edgeWeight) {
-		this.markedPredecessor = (Node) predecessor;
-		if (predecessor == null) // this node is the starting node
-			return;
-		this.markedLength = predecessor.getMarkedLength() + edgeWeight;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@Override
-	public MarkableNode getPredecessor() {
-		return this.markedPredecessor;
-	}
 
-	public boolean hasPredecessor() {
-		return this.markedPredecessor != null;
-	}
 
-	/**
-	 * Gets the marked length to get to this node
-	 * */
-	@Override
-	public int getMarkedLength() {
-		return this.markedLength;
-	}
+    public List<SignalInformation> getSignalInformationList() {
+        return new ArrayList<SignalInformation>(signalInformationList);
+    }
 
-	@Override
-	public MarkableNode getShortestPath(MarkableNode targetNode) {
-		if (this.equals(targetNode)) {
-			// the node we were searching for is this node self, so just return
-			// ourselves
-			return this;
-		}
+    /**
+     * Set a COPY of the passed List as the new signalInformationList
+     * @param signalInformationList
+     */
+    public void setSignalInformationList(List<SignalInformation> signalInformationList) {
+        this.signalInformationList = new ArrayList<SignalInformation>(signalInformationList);
+    }
 
-		// get the edges of this node
-		List<Edge> edges = getEdges();
-		// sort the edges, putting the smallest first, we will try with the
-		// smallest edge first
-		edges.sort(new EdgeComparator());
+    @Override
+    public String toString() {
+        return "Node " + id;
+    }
 
-		setPredecessorIfNecessary(edges);
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
+    }
 
-		for (int i = 0; i < edges.size(); i++) {
-			Edge edge = edges.get(i);
-			Node destinationNode = edge.getNode2();
-			if (!destinationNode.hasPredecessor()) // is the starting node, from
-													// which we arrived
-				continue;
-			if (destinationNode.getPredecessor().equals(this)) {
-				MarkableNode path = destinationNode.getShortestPath(targetNode);
-				if (path == null)
-					continue;
-				else
-					return path;
-			}
-		}
-
-		return null;
-
-	}
-
-	public void setPredecessorIfNecessary(List<Edge> edges) {
-		for (Edge edge : edges) {
-			int newMarkedLength = this.getMarkedLength() + edge.getWeight();
-			Node destinationNode = edge.getNode2();
-			if (destinationNode.hasPredecessor()) {
-				Node predecessor = (Node) destinationNode.getPredecessor();
-				if (newMarkedLength < predecessor.getMarkedLength())
-					destinationNode.setPredecessor(this, edge.getWeight());
-				else {
-					continue;
-				}
-			} else {
-				if (!this.hasPredecessor()) {
-					// this node is the starting one, no risk of a cycle
-					destinationNode.setPredecessor(this, edge.getWeight());
-					continue;
-				}
-
-				if (!destinationNode.hasPredecessor() && !this.getPredecessor().equals(destinationNode)) {
-					destinationNode.setPredecessor(this, edge.getWeight());
-				}
-			}
-		}
-	}
-
-	public static void printEdges(List<Edge> edges2) {
-		for (Edge e : edges2) {
-			System.out.println((String.format("%s => %s : %d", e.getNode1(), e.getNode2(), e.getWeight())));
-		}
-	}
-
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof Node)){
+            return false;
+        }
+        Node node = (Node) other;
+        return this.id.equals(((Node) other).id);
+    }
 }
