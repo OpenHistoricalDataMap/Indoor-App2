@@ -87,7 +87,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         // TODO this operation could run through all the nodes. Consider passing the whole Node
         // TODO look on the internet what would be more performance expensive
-        this.parentNode = MainActivity.graph.getNodeById(poiId);
+        this.parentNode = MainActivity.graph.getNode(poiId);
         setTitle(parentNode.getId()+" Measurement");
     }
 

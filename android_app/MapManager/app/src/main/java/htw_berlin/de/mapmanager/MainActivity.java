@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,12 +16,15 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
+import htw_berlin.de.mapmanager.graph.dijkstra.DijkstraAlgorithm;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 import htw_berlin.de.mapmanager.persistence.WritePermissionException;
@@ -134,6 +138,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setLongClickable(true);
     }
 
+    // TODO: cbos dijkstra
+    private void dijkstra(){
+        // Construct it just when the graph changes!
+        final DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+
+        // has to be executed everytime the current position changes
+        dijkstra.execute("aaa");
+        //dijkstra.execute("node_id_of_current_position");
+
+        // pick the path to the destination
+        //LinkedList<Node> path = dijkstra.getPath("node_id_of_destination");
+        LinkedList<Node> path = dijkstra.getPath("zzz");
+
+        if(path == null){
+            Log.d(LOG_TAG, "No path found");
+            Toast.makeText(this, "No path found", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Log.d(LOG_TAG, "Path found");
+            for (Node node : path) {
+                Log.d(LOG_TAG, node.toString());
+            }
+        }
+
+
+
+    }
+
     /**
      * Called when the user clicks the new POI button
      */
@@ -141,8 +173,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         final String poiName = poiNameTextView.getText().toString();
         poiNameTextView.setText("");
         if (!poiName.equalsIgnoreCase("")) {
+            // Adding just if the node does not exist.
+            // Warning! With true --> "override" --> edges will be deleted!!
+            boolean added = graph.addNode(new Node(poiName), false);
 
-            graph.addNode(new Node(poiName));
+            if(!added){
+                Toast.makeText(this, "POI Not added. Check if the name already exists and " +
+                        "delete the node eventually.", Toast.LENGTH_LONG).show();
+            }
 
             // close the keyboard
             View currentFocus = this.getCurrentFocus();
@@ -152,9 +190,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             // refresh gui (not going to work if Graph.nodes is a (Linked)HashSet
-            adapter.notifyDataSetChanged();
+            // not going to work also with the new graph that returns copies of the lists for
+            // security reasons
+            //adapter.notifyDataSetChanged();
+
+            // update the whole adapter
+            updateAdapterAndListView();
         } else {
-            showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name (minimum 1 non-special Character)");
+            showSimpleAlert("Invalid POI Name", "Please insert a valid POI Name " +
+                    "(minimum 1 non-special Character)");
         }
 
 
@@ -227,8 +271,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             e.printStackTrace();
                         }
 
-
-
                         break;
 
                     case DialogInterface.BUTTON_NEGATIVE:
@@ -239,7 +281,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Are you sure?\n This will delete permanently the POI and all its contents").setPositiveButton("Yes", dialogClickListener)
+        builder.setMessage("Are you sure?\n This will delete permanently the POI " +
+                "and all its contents")
+                .setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener).show();
 
 
@@ -276,11 +320,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         persistenceManager.deleteAlbumStorageDir(node);
 
 
-        // remove the node from the list
-        graph.getNodes().remove(node);
+        // remove the node from the graph
+        graph.removeNode(node.getId());
+
         // store the updated graph
         persistenceManager.storeGraph(MainActivity.graph);
-
-
     }
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -43,7 +42,7 @@ public class POIConnectionsActivity extends AppCompatActivity {
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
-        this.parentNode = MainActivity.graph.getNodeById(poiId);
+        this.parentNode = MainActivity.graph.getNode(poiId);
         setTitle(parentNode.getId());
 
         initPermissions();

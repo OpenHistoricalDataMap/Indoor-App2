@@ -12,10 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.annotations.Expose;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import htw_berlin.de.mapmanager.MainActivity;
@@ -104,27 +101,27 @@ public class Compass2Activity extends AppCompatActivity {
 
         //get the parent Node to store the data
         parentNodeId=extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
-        parentNode = MainActivity.graph.getNodeById(parentNodeId);
+        parentNode = MainActivity.graph.getNode(parentNodeId);
 
         //get the destination Node
         destinationNodeID=extra.getString(DefineEdgeActivity.POI_ID_DESTINATION);
-        destinationNode = MainActivity.graph.getNodeById(destinationNodeID);
+        destinationNode = MainActivity.graph.getNode(destinationNodeID);
 
         Log.d(TAG, "Magnet Klasse");
         Log.d(TAG,"Ausgabe ParentNode: "+ parentNode.getId());
         Log.d(TAG,"Ausgabe DestinationNode: "+ destinationNode.getId());
 
 
-        LinkedHashMap <String , Integer> test=parentNode.getEdges();
-        for(Integer s:test.values())
+        ArrayList<Edge> test=parentNode.getEdges();
+        for(Edge edge : test)
         {
-            Log.d(TAG,"Ausagabe Edge: "+test.get(s));
+            Log.d(TAG,"Ausagabe DijkstraEdge: "+edge);
         }
     }
 
     /**
      * Listener for the compass, use the magnetic field sensor and the accelometer to find the
-     * right direction.
+     * right direction.§
      */
 
     private SensorEventListener magnetListener = new SensorEventListener() {
@@ -212,13 +209,21 @@ public class Compass2Activity extends AppCompatActivity {
             //
 
 
-            //edge=new Edge(stpsInMeter,parentNodeId,destinationNodeID,
+            //edge=new DijkstraEdge(stpsInMeter,parentNodeId,destinationNodeID,
               //      parentNodeId+destinationNodeID,listWayPoint);
-         MainActivity.graph.addEdge(new Edge(stpsInMeter,parentNodeId,destinationNodeID,parentNodeId+destinationNodeID,listWayPoint));
-           // MainActivity.graph.getNodeById(parentNodeId).setWay(listWayPoint);
+
+            /* tognimat: This is old from fhausler. The edge exists already (as soon as we checked
+             * the checkbox), what we define here is simply the way points that are part of that edge
+             */
+            //MainActivity.graph.addEdge(new DijkstraEdge(stpsInMeter,parentNodeId,destinationNodeID,parentNodeId+destinationNodeID,listWayPoint));
+            Edge edgeBetween = parentNode.getEdge(destinationNode);
+            edgeBetween.setWay(listWayPoint);
 
 
-            Log.d(TAG,"Way: "+MainActivity.graph.getEdgeNodeId(parentNodeId,destinationNodeID));
+           // MainActivity.graph.getNode(parentNodeId).setWay(listWayPoint);
+
+
+            Log.d(TAG,"Way: "+ edgeBetween);
 
 
         }
@@ -234,7 +239,7 @@ public class Compass2Activity extends AppCompatActivity {
      */
     public void onClickShowList(View view) {
 
-      textViewListe.setText("Liste: "+MainActivity.graph.getEdgeNodeId(parentNodeId,destinationNodeID));
+        textViewListe.setText("Liste: "+parentNode.getEdge(destinationNode));
 
     }
 

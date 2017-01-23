@@ -56,9 +56,11 @@ public class PersistenceManager {
                 .excludeFieldsWithoutExposeAnnotation()
                 .serializeNulls();
 
-        // manage circular references in the graph (Edge->Node->Edge->...)
+        // manage circular references in the graph (DijkstraEdge->Node->DijkstraEdge->...)
         new GraphAdapterBuilder()
-                //.addType(Node.class) // TODO: enable if necessary (youll probably need to delete the graph.json data)
+                // enable if cyclic dependencies make the application crash
+                // (you will probably need to delete the graph.json data)
+                .addType(Node.class)
                 .registerOn(gsonBuilder);
 
         // Create the Gson object. THis is what we use to parse and convert
@@ -205,6 +207,7 @@ public class PersistenceManager {
                 Log.d(LOG_TAG, "Deleted " + i);
             }
         }
+        albumDir.delete();
     }
 
 
@@ -297,6 +300,7 @@ public class PersistenceManager {
 
             while ((length = inStream.read(buffer)) > 0){
                 outStream.write(buffer, 0, length);
+                Log.d(LOG_TAG, new String(buffer));
             }
 
             inStream.close();
