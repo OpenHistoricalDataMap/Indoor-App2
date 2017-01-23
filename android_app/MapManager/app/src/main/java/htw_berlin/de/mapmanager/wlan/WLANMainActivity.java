@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -43,6 +44,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
     private Node parentNode;
     private Button saveJsonButton;
     private PermissionManager permissionManager;
+    private EditText timeToMeasure;
     private boolean isCancelPressed = false;
     private Integer current = 0, total = 180;
 
@@ -52,13 +54,14 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         private AlertDialog.Builder builder;
         private AlertDialog alertDialog;
         int waitMilliseconds = 1000;
+        private boolean cancelthis;
 
         @Override
         protected Integer doInBackground(Integer... params) {
             List<Node.SignalInformation> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
             List<Node.SignalInformation> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
             Integer count = 0;
-            Integer max = 180;
+            Integer max = 60*params[0];
             for(count = 0; count <max;count++)
             {
                 Date d = new Date();
@@ -71,12 +74,16 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
                     }
                 }
                 signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
-                try{
+                if(cancelthis)
+                {
+                    break;
+                }
+                try {
                     Thread.sleep(1000);
                     scanAgain();
-                    publishProgress(count,max);
+                    publishProgress(count, max);
                 }
-                catch(InterruptedException e){
+                catch(InterruptedException e) {
                     break;
                 }
             }
@@ -87,13 +94,14 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            cancelthis = false;
             this.builder = new AlertDialog.Builder(WLANMainActivity.this);
             this.builder.setMessage("Progress Status init");
             this.builder.setTitle("Progress Status");
             this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    WLANMainActivity.this.isCancelPressed = true;
+                    cancelthis = true;
                 }
             });
             this.alertDialog = builder.create();
@@ -103,6 +111,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
+            cancelthis = false;
             this.alertDialog.hide();
             this.alertDialog.dismiss();
         }
@@ -141,6 +150,9 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         button = (Button) this.findViewById(R.id.saveIntervall);
         button.setOnClickListener(this);
+
+        timeToMeasure = (EditText) this.findViewById(R.id.edit_timer);
+
 
         // Tognimat persisting node with measurements
         saveJsonButton = (Button) this.findViewById(R.id.saveJSON);
@@ -192,7 +204,15 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
         }
 
         if(v == saveIntervall){
-            new AsyncSave().execute(1);
+            Integer timer;
+            try{
+                timer = Integer.parseInt(timeToMeasure.getText().toString());
+            }
+            catch(Exception e)
+            {
+                timer = 3;
+            }
+            new AsyncSave().execute(timer);
         }
 
     }
