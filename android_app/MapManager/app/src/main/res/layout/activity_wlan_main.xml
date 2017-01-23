@@ -58,4 +58,24 @@
         android:layout_alignParentRight="true"
         />
 
+    <EditText
+        android:text="3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:layout_above="@+id/saveJSON"
+        android:layout_toEndOf="@+id/saveJSON"
+        android:id="@+id/edit_timer" />
+
+    <TextView
+        android:text="Minutes to Save:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/saveIntervall"
+        android:layout_above="@+id/edit_timer"
+        android:layout_alignStart="@+id/edit_timer"
+        android:id="@+id/textView2" />
+
+
 </RelativeLayout>

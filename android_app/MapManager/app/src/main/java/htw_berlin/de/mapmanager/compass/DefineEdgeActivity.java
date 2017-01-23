@@ -2,15 +2,20 @@ package htw_berlin.de.mapmanager.compass;
 
 import android.content.Intent;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import java.io.File;
 
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.compass.Compass2Activity;
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 
 public class DefineEdgeActivity extends AppCompatActivity {
@@ -28,6 +33,8 @@ public class DefineEdgeActivity extends AppCompatActivity {
     private String parentNodeId;
     private String destinationNodeId;
 
+    private ImageView imageView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +47,8 @@ public class DefineEdgeActivity extends AppCompatActivity {
         destinationNodeId=extra.getString(POI_ID_DESTINATION);
 
         compass=(Button)findViewById(R.id.btnGotoCompass);
-      //  step =(Button)findViewById(R.id.btnGotoStepCounter);
+
+        initImageView();
 
 
     }
@@ -53,12 +61,19 @@ public class DefineEdgeActivity extends AppCompatActivity {
 
     }
 
-    // Implemented in Compass2Activity
 
-   /* public void onClickStepCounter(View view){
-        Intent intent =new Intent(this,StepCountActivity.class);
-        startActivity(intent);
-    }*/
+    private void initImageView(){
+        imageView = (ImageView)findViewById(R.id.destinationPOIImage);
+
+        File nodeImageFile = PersistenceManager.getNodeImageFile(destinationNodeId);
+        if(!nodeImageFile.exists()){
+            imageView.setImageResource(R.mipmap.ic_launcher);
+        }
+        else {
+            Uri nodeImageUri = Uri.fromFile(nodeImageFile);
+            imageView.setImageURI(nodeImageUri);
+        }
+    }
 
 
 

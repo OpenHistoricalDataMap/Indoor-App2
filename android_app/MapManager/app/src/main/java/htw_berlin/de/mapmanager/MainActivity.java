@@ -27,8 +27,12 @@ import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.dijkstra.DijkstraAlgorithm;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+
+import htw_berlin.de.mapmanager.persistence.ReadPermissionException;
 import htw_berlin.de.mapmanager.persistence.WritePermissionException;
+
 import htw_berlin.de.mapmanager.prefs.SettingsActivity;
+
 import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
@@ -84,8 +88,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings_item:
+
                 Intent intent = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent);
+
                 break;
             case R.id.dump_graph_item:
                 try {

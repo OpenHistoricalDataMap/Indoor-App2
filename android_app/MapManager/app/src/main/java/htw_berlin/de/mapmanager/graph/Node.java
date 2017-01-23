@@ -142,13 +142,7 @@ public class Node {
         this.id = id;
     }
 
-   /* public ArrayList<WayPoint> getWay() {
-        return way;
-    }*/
 
-   /* public void setWay(ArrayList<WayPoint> way) {
-        this.way = way;
-    }*/
 
     public List<SignalInformation> getSignalInformationList() {
         return new ArrayList<SignalInformation>(signalInformationList);

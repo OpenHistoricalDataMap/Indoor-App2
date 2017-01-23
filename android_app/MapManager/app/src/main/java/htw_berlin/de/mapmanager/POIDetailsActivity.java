@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class POIDetailsActivity extends AppCompatActivity{
     private Button capture;
     private Button setConnections;
     private Button btnGoToMeasurement;
+    private TextView tvMeasurements;
     private ImageView currentPOIImage;
     private Button resetPoi;
 
@@ -80,6 +82,9 @@ public class POIDetailsActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
+        tvMeasurements = (TextView) findViewById(R.id.tv_measurements);
+        tvMeasurements.setText("Measurements done: "+parentNode.getSignalInformationList().size());
 
     }
 
