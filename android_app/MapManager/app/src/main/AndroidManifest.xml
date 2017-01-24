@@ -38,13 +38,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".POIDetailsActivity" />
         <activity android:name=".POIConnectionsActivity" />
 
@@ -63,7 +57,14 @@
             android:exported="true" />
 
         <activity android:name=".WhereAmIActivity" />
-        <activity android:name=".StartScreenActivity"></activity>
+
+        <activity android:name=".StartActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

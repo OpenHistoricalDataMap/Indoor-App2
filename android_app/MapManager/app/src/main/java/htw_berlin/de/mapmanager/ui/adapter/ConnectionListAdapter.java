@@ -1,7 +1,6 @@
 package htw_berlin.de.mapmanager.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +13,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.compass.DefineEdgeActivity;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.compass.Edge;
-import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
 
 
@@ -61,7 +60,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
             case R.id.cb_reachable:
                 // if checked and no connection between the two exists yet -> add
                 if(isChecked && (edgeBetween == null)/*selectedNode.getEdges().containsKey(parentNode) &! parentNode.getEdges().containsKey(selectedNode)*/){
-                    boolean added = MainActivity.graph.addEdge(parentNode, selectedNode);
+                    boolean added = StartActivity.graph.addEdge(parentNode, selectedNode);
                     Log.d(LOG_TAG, "Added? " + added);
                     /*
                     Old graph
@@ -72,7 +71,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
                 }
                 // if unchecked and a connection exists -> remove
                 else if(!isChecked && (edgeBetween != null)/*selectedNode.getEdges().containsKey(parentNode) && parentNode.getEdges().containsKey(selectedNode)*/){
-                    Edge edgeRemoved = MainActivity.graph.removeEdge(edgeBetween);
+                    Edge edgeRemoved = StartActivity.graph.removeEdge(edgeBetween);
                     String text = "Removed null";
                     if(edgeRemoved != null){
                         text = "Removed " + edgeRemoved.toString();

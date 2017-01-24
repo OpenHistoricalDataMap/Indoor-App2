@@ -42,7 +42,7 @@ public class POIConnectionsActivity extends AppCompatActivity {
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
-        this.parentNode = MainActivity.graph.getNode(poiId);
+        this.parentNode = StartActivity.graph.getNode(poiId);
         setTitle(parentNode.getId());
 
         initPermissions();
@@ -62,7 +62,7 @@ public class POIConnectionsActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.connectionListView);
         ArrayList<Node> allOtherNodes = new ArrayList<>();
-        allOtherNodes.addAll(MainActivity.graph.getNodes());
+        allOtherNodes.addAll(StartActivity.graph.getNodes());
         allOtherNodes.remove(parentNode);
         adapter = new ConnectionListAdapter(parentNode, allOtherNodes, this);
         listView.setAdapter(adapter);
@@ -93,7 +93,7 @@ public class POIConnectionsActivity extends AppCompatActivity {
                 PersistenceManager persistenceManager = new PersistenceManager(permissionManager);
                 //persistenceManager.storeGraph(MainActivity.graph);
                 try {
-                    persistenceManager.storeGraph(MainActivity.graph);
+                    persistenceManager.storeGraph(StartActivity.graph);
                     //persistenceManager.storeGraph(MainActivity.graph);
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.graph.dijkstra.DijkstraAlgorithm;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
@@ -36,7 +35,6 @@ import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     public final static String EXTRA_MESSAGE_POI_ID = "htw_berlin.de.MapManager.POI_ID";
-    public static Graph graph;
     public static float nullPressure = 0;
     private PoiListAdapter adapter;
     private Button newPoiButton;
@@ -66,11 +64,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         try {
-            graph = PersistenceManager.loadGraph();
+            StartActivity.graph = PersistenceManager.loadGraph();
         } catch (FileNotFoundException e) {
             Log.d(LOG_TAG, "Creating empty graph");
             // data not loaded, create a new graph
-            graph = emptyGraph();
+            StartActivity.graph = StartActivity.emptyGraph();
         }
 
 
@@ -108,10 +106,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
-    private static final Graph emptyGraph() {
-        return new Graph();
-    }
-
 
     @Override
     protected void onStart() {
@@ -132,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // list view
         listView = (ListView) findViewById(R.id.poiListView);
-        adapter = new PoiListAdapter(graph.getNodes(), this);
+        adapter = new PoiListAdapter(StartActivity.graph.getNodes(), this);
         listView.setAdapter(adapter);
 
         // clickable and click listener
@@ -144,10 +138,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setLongClickable(true);
     }
 
-    // TODO: cbos dijkstra
+    // TODO: Someone use dijkstra
     private void dijkstra() {
         // Construct it just when the graph changes!
-        final DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+        final DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(StartActivity.graph);
 
         // has to be executed everytime the current position changes
         dijkstra.execute("aaa");
@@ -177,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (!poiName.equalsIgnoreCase("")) {
             // Adding just if the node does not exist.
             // Warning! With true --> "override" --> edges will be deleted!!
-            boolean added = graph.addNode(new Node(poiName), false);
+            boolean added = StartActivity.graph.addNode(new Node(poiName), false);
 
             if (!added) {
                 Toast.makeText(this, "POI Not added. Check if the name already exists and " +
@@ -301,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      */
     private void updateAdapterAndListView() {
         // update adpater and list view
-        adapter = new PoiListAdapter(graph.getNodes(), MainActivity.this);
+        adapter = new PoiListAdapter(StartActivity.graph.getNodes(), MainActivity.this);
         listView.setAdapter(adapter);
         listView.invalidateViews();
     }
@@ -323,9 +317,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         // remove the node from the graph
-        graph.removeNode(node.getId());
+        StartActivity.graph.removeNode(node.getId());
 
         // store the updated graph
-        persistenceManager.storeGraph(MainActivity.graph);
+        persistenceManager.storeGraph(StartActivity.graph);
     }
 }

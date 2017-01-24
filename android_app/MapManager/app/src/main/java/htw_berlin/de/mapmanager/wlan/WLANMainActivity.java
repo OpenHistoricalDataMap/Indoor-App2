@@ -31,6 +31,7 @@ import java.util.List;
 
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
@@ -183,7 +184,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         // TODO this operation could run through all the nodes. Consider passing the whole Node
         // TODO look on the internet what would be more performance expensive
-        this.parentNode = MainActivity.graph.getNode(poiId);
+        this.parentNode = StartActivity.graph.getNode(poiId);
         setTitle(parentNode.getId()+" Measurement");
     }
 
