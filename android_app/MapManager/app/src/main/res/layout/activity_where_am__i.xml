@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="htw_berlin.de.mapmanager.WhereAmIActivity">
+    tools:context="htw_berlin.de.mapmanager.navi.WhereAmIActivity">
 
 
     <Button
@@ -40,7 +40,7 @@
         android:layout_below="@+id/btnWhereAmI_FindCurrent" />
 
     <TextView
-        android:text="TextView"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

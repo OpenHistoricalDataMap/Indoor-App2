@@ -5,11 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
+import htw_berlin.de.mapmanager.navi.WhereAmIActivity;
 import htw_berlin.de.mapmanager.graph.Graph;
-import htw_berlin.de.mapmanager.ui.adapter.PoiListAdapter;
 
 /**
  * Initial activity with the 2 buttons
@@ -20,7 +18,7 @@ public class StartActivity extends AppCompatActivity {
     private Button aufnahmeButton;
     private Button navigationButton;
 
-    static final Graph emptyGraph() {
+    public static final Graph emptyGraph() {
         return new Graph();
     }
 

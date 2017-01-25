@@ -40,4 +40,5 @@ dependencies {
     // for graph management
     compile group: 'org.danilopianini', name: 'gson-extras', version: '0.2.1'
 
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

@@ -106,6 +106,8 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
                 }
             });
             this.alertDialog = builder.create();
+            this.alertDialog.setCancelable(false);
+            this.alertDialog.setCanceledOnTouchOutside(false);
             this.alertDialog.show();
         }
 
