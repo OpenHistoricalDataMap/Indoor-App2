@@ -58,6 +58,18 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
 
                     //COMPARE SCANRESULT with to be reached POI. -> set currentNode
                     if (currentNode.getId() == path.get(0).getId() || poiReached) {
+                        if(path.size() == 1)
+                        {
+                            publishProgress("Congratulations you've reached your final destination");
+                            try{
+                                Thread.sleep(5000);
+                            }
+                            catch (InterruptedException e)
+                            {
+                                break;
+                            }
+                            break;
+                        }
                         path.remove(0);
                         publishProgress("Please go to POI" + path.get(0).getId());
                         poiReached = false;
@@ -71,7 +83,7 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
 
-            return null;
+            return 1;
         }
 
         @Override
