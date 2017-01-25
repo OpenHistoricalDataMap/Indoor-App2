@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.LinkedList;
@@ -39,6 +40,7 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
         int waitMilliseconds = 1000;
         private boolean cancelthis;
         private boolean poiReached;
+        Node currentNode;
 
         @Override
         protected Integer doInBackground(String... params) {
@@ -46,27 +48,27 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
             dijk = new DijkstraAlgorithm(graph);
             dijk.execute(params[0]);
             path = dijk.getPath(params[1]);
-            publishProgress("Please go to POI "+path.get(0).getId());
             ThatApp scanapp = ThatApp.getThatApp();
             List<ScanResult> scanResults  = ThatApp.getThatApp().getWifiManager().getScanResults();
-            while(path.get(0).getId() != params[1] && !cancelthis)
-            {
-                //COMPARE SCANRESULT WITH POI -> Set poiReached true in there
+            if(path != null) {
+                currentNode = path.get(0);
+                path.remove(0);
+                publishProgress("Please go to POI "+path.get(0).getId());
+                while(!cancelthis){
 
-                if(poiReached)
-                {
-                    path.remove(0);
-                    publishProgress("Please go to POI"+path.get(0).getId());
-                    poiReached = false;
+                    //COMPARE SCANRESULT with to be reached POI. -> set currentNode
+                    if (currentNode.getId() == path.get(0).getId() || poiReached) {
+                        path.remove(0);
+                        publishProgress("Please go to POI" + path.get(0).getId());
+                        poiReached = false;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                        scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
                 }
-                try {
-                    Thread.sleep(1000);
-                    scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
-                }
-                catch(InterruptedException e) {
-                    break;
-                }
-
             }
 
             return null;
@@ -80,22 +82,34 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
             this.builder = new AlertDialog.Builder(SelectTarget.this);
             this.builder.setMessage("Initialize");
             this.builder.setTitle("Navigation in Progresss");
-            this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    cancelthis = true;
-                }
-            });
-            this.builder.setNeutralButton("Forward", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    poiReached = true;
-                }
-            });
+            this.builder.setNegativeButton("Cancel!", null);
+            this.builder.setNeutralButton("Forward", null);
             this.alertDialog = builder.create();
             this.alertDialog.setCancelable(false);
             this.alertDialog.setCanceledOnTouchOutside(false);
+            this.alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Button buttonNeutral = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                    buttonNeutral.setOnClickListener(new View.OnClickListener(){
+
+                        @Override
+                        public void onClick(View v) {
+                            poiReached = true;
+                        }
+                    });
+                    Button buttonCancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                    buttonCancel.setOnClickListener(new View.OnClickListener(){
+
+                        @Override
+                        public void onClick(View v) {
+                            cancelthis = true;
+                        }
+                    });
+                }
+            });
             this.alertDialog.show();
+
         }
 
         @Override

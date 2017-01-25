@@ -102,13 +102,20 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
             this.builder.setNegativeButton("Cancel!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    cancelthis = true;
+
                 }
             });
             this.alertDialog = builder.create();
             this.alertDialog.setCancelable(false);
             this.alertDialog.setCanceledOnTouchOutside(false);
             this.alertDialog.show();
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    cancelthis = true;
+                }
+
+            });
         }
 
         @Override
