@@ -49,7 +49,7 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
             dijk.execute(params[0]);
             path = dijk.getPath(params[1]);
             ThatApp scanapp = ThatApp.getThatApp();
-            List<ScanResult> scanResults  = ThatApp.getThatApp().getWifiManager().getScanResults();
+            List<ScanResult> scanResults  = scanapp.getWifiManager().getScanResults();
             if(path != null) {
                 currentNode = path.get(0);
                 path.remove(0);
@@ -64,7 +64,7 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
                     }
                     try {
                         Thread.sleep(1000);
-                        scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
+                        scanResults = scanapp.getWifiManager().getScanResults();
                     } catch (InterruptedException e) {
                         break;
                     }

@@ -13,6 +13,6 @@ public class WLANScanResultsReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
 
-        ThatApp.getThatApp().printScan();
+       // ThatApp.getThatApp().printScan();
     }
 }

@@ -77,6 +77,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
                 signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
                 if(cancelthis)
                 {
+                    signalList = backupList;
                     break;
                 }
                 try {
