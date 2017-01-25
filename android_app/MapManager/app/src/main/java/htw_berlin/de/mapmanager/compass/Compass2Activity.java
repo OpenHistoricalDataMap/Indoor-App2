@@ -13,10 +13,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
+import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.graph.Node;
 
 public class Compass2Activity extends AppCompatActivity {
@@ -101,11 +101,11 @@ public class Compass2Activity extends AppCompatActivity {
 
         //get the parent Node to store the data
         parentNodeId=extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
-        parentNode = MainActivity.graph.getNode(parentNodeId);
+        parentNode = StartActivity.graph.getNode(parentNodeId);
 
         //get the destination Node
         destinationNodeID=extra.getString(DefineEdgeActivity.POI_ID_DESTINATION);
-        destinationNode = MainActivity.graph.getNode(destinationNodeID);
+        destinationNode = StartActivity.graph.getNode(destinationNodeID);
 
         Log.d(TAG, "Magnet Klasse");
         Log.d(TAG,"Ausgabe ParentNode: "+ parentNode.getId());

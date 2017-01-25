@@ -1,7 +1,8 @@
 package htw_berlin.de.mapmanager.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,17 +11,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.compass.DefineEdgeActivity;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.compass.Edge;
-import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
-
+import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
 
 public class ConnectionListAdapter extends ArrayAdapter<Node> implements CompoundButton.OnCheckedChangeListener{
@@ -35,7 +38,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
     // View lookup cache
     private static class ViewHolder {
         TextView poiName;
-        //ImageView imageView; OLD
+        ImageView imageView; //OLD
         CheckBox cbReachable;
         //CheckBox cbBarrierefrei;
         Button defineEdge;
@@ -61,7 +64,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
             case R.id.cb_reachable:
                 // if checked and no connection between the two exists yet -> add
                 if(isChecked && (edgeBetween == null)/*selectedNode.getEdges().containsKey(parentNode) &! parentNode.getEdges().containsKey(selectedNode)*/){
-                    boolean added = MainActivity.graph.addEdge(parentNode, selectedNode);
+                    boolean added = StartActivity.graph.addEdge(parentNode, selectedNode);
                     Log.d(LOG_TAG, "Added? " + added);
                     /*
                     Old graph
@@ -72,7 +75,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
                 }
                 // if unchecked and a connection exists -> remove
                 else if(!isChecked && (edgeBetween != null)/*selectedNode.getEdges().containsKey(parentNode) && parentNode.getEdges().containsKey(selectedNode)*/){
-                    Edge edgeRemoved = MainActivity.graph.removeEdge(edgeBetween);
+                    Edge edgeRemoved = StartActivity.graph.removeEdge(edgeBetween);
                     String text = "Removed null";
                     if(edgeRemoved != null){
                         text = "Removed " + edgeRemoved.toString();
@@ -110,7 +113,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
             convertView = inflater.inflate(R.layout.list_item_connection, parent, false);
 
             viewHolder.poiName = (TextView) convertView.findViewById(R.id.poiName);
-            //viewHolder.imageView = (ImageView) convertView.findViewById(R.id.listRowDetailsImage);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.iv_connection_list);
             viewHolder.cbReachable = (CheckBox) convertView.findViewById(R.id.cb_reachable);
             //viewHolder.cbBarrierefrei = (CheckBox) convertView.findViewById(R.id.cb_barrierefrei);
             viewHolder.defineEdge = (Button) convertView.findViewById(R.id.btnDefineEdge);
@@ -123,13 +126,24 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         lastPosition = position;
 
         viewHolder.poiName.setTag(position);
-        //viewHolder.imageView.setTag(position);
+        viewHolder.imageView.setTag(position);
         viewHolder.cbReachable.setTag(position);
         //viewHolder.cbBarrierefrei.setTag(position);
 
         viewHolder.poiName.setText(nodeAtPosition.getId());
 
 
+        File nodeImageFile = PersistenceManager.getNodeImageFile(nodeAtPosition.getId());
+        if(!nodeImageFile.exists()){
+            viewHolder.imageView.setImageResource(R.mipmap.ic_launcher);
+        }
+        else {
+
+            Bitmap bitmap = loadLightweightBitmapFromFile(nodeImageFile);
+            viewHolder.imageView.setImageBitmap(bitmap);
+
+
+        }
 
         boolean childReachable = edgeBetween != null;
         viewHolder.cbReachable.setChecked(childReachable);
@@ -150,5 +164,10 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
 
         // Return the completed view to render on screen
         return convertView;
+    }
+    private Bitmap loadLightweightBitmapFromFile(File file){
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
+        return BitmapFactory.decodeFile(file.getPath(),options);
     }
 }

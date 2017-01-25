@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <!-- Still to take pictures -->
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -39,33 +38,38 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".POIDetailsActivity" />
+        <activity android:name=".POIConnectionsActivity" />
+
+        <!-- Sensor (Florian) activities -->
+        <activity android:name=".compass.DefineEdgeActivity" />
+        <!-- <activity android:name=".compass.StepCountActivity" /> -->
+        <activity android:name=".compass.Compass2Activity" />
+
+        <!-- WLAN (Christoph) activites -->
+        <activity android:name=".wlan.WLANMainActivity" />
+        <activity android:name=".prefs.SettingsActivity" />
+
+        <receiver
+            android:name=".wlan.WLANScanResultsReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".navi.WhereAmIActivity" />
+        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".POIDetailsActivity" />
-        <activity android:name=".POIConnectionsActivity" />
-
-        <!-- Sensor (Florian) activities -->
-        <activity android:name=".compass.DefineEdgeActivity" />
-        <!--<activity android:name=".compass.StepCountActivity" />-->
-        <activity android:name=".compass.Compass2Activity" />
-
-        <!-- WLAN (Christoph) activites -->
-        <activity android:name=".wlan.WLANMainActivity" />
-
-        <activity android:name=".prefs.SettingsActivity" />
-
-        <receiver
-            android:name=".wlan.WLANScanResultsReceiver"
-            android:enabled="true"
-            android:exported="true">
-
-        </receiver>
-
+        <activity android:name=".navi.SelectTarget" />
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

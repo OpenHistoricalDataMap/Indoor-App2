@@ -56,7 +56,7 @@ public class POIDetailsActivity extends AppCompatActivity{
 
         // TODO this operation could run through all the nodes. Consider passing the whole Node
         // TODO look on the internet what would be more performance expensive
-        this.parentNode = MainActivity.graph.getNode(poiId);
+        this.parentNode = StartActivity.graph.getNode(poiId);
         setTitle(parentNode.getId());
 
         initPermissions();
@@ -191,7 +191,7 @@ public class POIDetailsActivity extends AppCompatActivity{
                                     // store the empty measurements
                                     persistenceManager.storeNodeMeasurements(parentNode);
                                     // store the graph
-                                    persistenceManager.storeGraph(MainActivity.graph);
+                                    persistenceManager.storeGraph(StartActivity.graph);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 } catch (WritePermissionException e) {
