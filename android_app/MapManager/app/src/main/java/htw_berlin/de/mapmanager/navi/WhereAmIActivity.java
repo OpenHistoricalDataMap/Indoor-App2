@@ -77,6 +77,8 @@ public class WhereAmIActivity extends AppCompatActivity {
         boolean kalmanFilter = sharedPrefs.getBoolean("pref_kalman", false);
         boolean euclideanDistance = sharedPrefs.getBoolean("pref_euclideanDistance", false);
         boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
+
+        //TODO: cbos hier anschauen
         String ssid = sharedPrefs.getString("pref_ssid", "bvg-info");
         StartActivity.graph.setSsid(ssid);
 
