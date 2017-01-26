@@ -19,6 +19,9 @@ import htw_berlin.de.mapmanager.compass.WayPoint;
  */
 
 public class Graph {
+    // ssid filter
+    private String ssid;
+
     @Expose
     // <Id, NodeObject>
     private LinkedHashMap<String, Node> nodes;
@@ -251,4 +254,12 @@ public class Graph {
     return null;
     }
      */
+
+    public String getSsid() {
+        return ssid;
+    }
+
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
 }

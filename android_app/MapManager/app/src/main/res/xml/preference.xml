@@ -45,4 +45,14 @@
             android:inputType="number"
             />
     </PreferenceCategory>
+    <PreferenceCategory
+    android:title="WLAN"
+    android:key="pref_offline">
+    <htw_berlin.de.mapmanager.prefs.ui.EditTextPreference
+        android:defaultValue="bvg-wifi"
+        android:key="pref_ssid"
+        android:title="SSID Filter"
+        android:inputType="textNoSuggestions"
+        />
+</PreferenceCategory>
 </PreferenceScreen>
