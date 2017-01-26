@@ -31,6 +31,10 @@ import htw_berlin.de.mapmanager.graph.Node;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 
+/**
+ * Activity to Perform a check of your current position
+ * @author  Christoph Bose
+ */
 public class WhereAmIActivity extends AppCompatActivity {
 
     private Button findPos;
@@ -79,7 +83,7 @@ public class WhereAmIActivity extends AppCompatActivity {
         boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
 
         //TODO: cbos hier anschauen
-        String ssid = sharedPrefs.getString("pref_ssid", "bvg-info");
+        String ssid = sharedPrefs.getString("pref_ssid", "BVG-Wifi");
         StartActivity.graph.setSsid(ssid);
 
 //        List<de.htwberlin.f4.ai.ma.fingerprint.NodeInterface> allFingerpintNodes = new ArrayList<>();
@@ -129,6 +133,10 @@ public class WhereAmIActivity extends AppCompatActivity {
         permissionManager.checkWifiPermissions();
     }
 
+    /**
+     * Currently just Placeholder
+     * @return Returns first node of Graph
+     */
     private Node getCurrentPosition() {
         return navigationGraph.getNodes().get(0);
     }
