@@ -62,16 +62,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //todo "delete all data" button ?
 
-
-        try {
-            StartActivity.graph = PersistenceManager.loadGraph();
-        } catch (FileNotFoundException e) {
-            Log.d(LOG_TAG, "Creating empty graph");
-            // data not loaded, create a new graph
-            StartActivity.graph = StartActivity.emptyGraph();
-        }
-
-
+        loadGraph();
         initGUI();
     }
 
@@ -99,11 +90,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     e.printStackTrace();
                 }
                 break;
+            case R.id.reload_graph_item:
+                loadGraph();
+                updateAdapterAndListView();
+                Toast.makeText(MainActivity.this, "Graph reloaded from memory", Toast.LENGTH_LONG).show();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
         return true;
+    }
+
+    protected void loadGraph() {
+        try {
+            StartActivity.graph = PersistenceManager.loadGraph();
+        } catch (FileNotFoundException e) {
+            Log.d(LOG_TAG, "Creating empty graph");
+            // data not loaded, create a new graph
+            StartActivity.graph = StartActivity.emptyGraph();
+            initGUI();
+        }
+
     }
 
 

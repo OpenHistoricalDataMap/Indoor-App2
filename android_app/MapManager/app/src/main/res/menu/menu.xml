@@ -4,4 +4,6 @@
         android:title="Settings" />
     <item android:id="@+id/dump_graph_item"
         android:title="Dump graph" />
+    <item android:id="@+id/reload_graph_item"
+        android:title="Reload graph" />
 </menu>
