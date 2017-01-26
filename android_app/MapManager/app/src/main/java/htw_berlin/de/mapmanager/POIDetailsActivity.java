@@ -54,7 +54,7 @@ public class POIDetailsActivity extends AppCompatActivity{
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
-        // TODO this operation could run through all the nodes. Consider passing the whole Node
+        // TODO this operation could run through all the nodes. Consider passing the whole NodeInterface
         // TODO look on the internet what would be more performance expensive
         this.parentNode = StartActivity.graph.getNode(poiId);
         setTitle(parentNode.getId());

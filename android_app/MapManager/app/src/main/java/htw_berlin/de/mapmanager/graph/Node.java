@@ -2,20 +2,20 @@ package htw_berlin.de.mapmanager.graph;
 
 import com.google.gson.annotations.Expose;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
+import de.htwberlin.f4.ai.ma.fingerprint.NodeInterface;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.compass.Edge;
-import htw_berlin.de.mapmanager.compass.WayPoint;
 
 /**
  * Created by Carola Walter
  * Changed by Christoph Bose, tognitos
  */
 
-public class Node {
+public class Node implements NodeInterface {
     @Expose
     String id;
 
@@ -28,53 +28,25 @@ public class Node {
 
     //private ArrayList<WayPoint> way = new ArrayList<>();
 
-
-
     @Expose
-    List<SignalInformation> signalInformationList;
+    List<SignalInformationInterface> signalInformationList;
 
 
-    public static class SignalInformation {
-        @Expose
-        String timestamp;
 
-        @Expose
-        List<SignalStrengthInformation> signalStrengthInformationList;
-
-        public SignalInformation(String timestamp, List<SignalStrengthInformation> signalStrengthInformationList) {
-            this.timestamp = timestamp;
-            this.signalStrengthInformationList = signalStrengthInformationList;
-        }
-    }
-
-    public static class SignalStrengthInformation {
-        @Expose
-        String macAdress;
-
-        @Expose
-        int signalStrength;
-
-        public SignalStrengthInformation(String macAdress, int signalStrength) {
-            this.macAdress = macAdress;
-            this.signalStrength = signalStrength;
-        }
-    }
-
-
-    public Node(String id, float zValue, List<SignalInformation> signalInformationList, ArrayList<Edge> edges) {
+    public Node(String id, float zValue, List<SignalInformationInterface> signalInformationList, ArrayList<Edge> edges) {
         this.id = id;
         this.zValue = zValue;
         this.signalInformationList = signalInformationList;
         this.edges = edges;
     }
 
-    public Node(String id, float zValue, List<SignalInformation> signalInformationList) {
+    public Node(String id, float zValue, List<SignalInformationInterface> signalInformationList) {
         this(id, zValue, signalInformationList, new ArrayList<Edge>());
     }
 
 
     public Node(String id){
-        this(id, 0, new ArrayList<SignalInformation>());
+        this(id, 0, new ArrayList<SignalInformationInterface>());
     }
 
     public void addEdge(Edge edge){
@@ -97,7 +69,7 @@ public class Node {
 
     /**
      * Returns the DijkstraEdge between this node and the specified destination node.
-     * @param toNode the destination Node to which this node is connected
+     * @param toNode the destination NodeInterface to which this node is connected
      * @return DijkstraEdge the edge that connects this node to the destination node, or null if there is no edge between
      */
     public Edge getEdge(Node toNode){
@@ -144,21 +116,23 @@ public class Node {
 
 
 
-    public List<SignalInformation> getSignalInformationList() {
-        return new ArrayList<SignalInformation>(signalInformationList);
+    @Override
+    public List<SignalInformationInterface> getSignalInformationList() {
+        return new ArrayList<>(signalInformationList);
     }
 
     /**
      * Set a COPY of the passed List as the new signalInformationList
      * @param signalInformationList
      */
-    public void setSignalInformationList(List<SignalInformation> signalInformationList) {
-        this.signalInformationList = new ArrayList<SignalInformation>(signalInformationList);
+    public void setSignalInformationList(List<SignalInformationInterface> signalInformationList) {
+        this.signalInformationList = new ArrayList<>(signalInformationList);
     }
+
 
     @Override
     public String toString() {
-        return "Node " + id;
+        return "NodeInterface " + id;
     }
 
     @Override

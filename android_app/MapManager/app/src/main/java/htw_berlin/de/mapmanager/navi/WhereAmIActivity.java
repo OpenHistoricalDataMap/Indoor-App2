@@ -78,10 +78,10 @@ public class WhereAmIActivity extends AppCompatActivity {
         boolean euclideanDistance = sharedPrefs.getBoolean("pref_euclideanDistance", false);
         boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
 
-//        List<de.htwberlin.f4.ai.ma.fingerprint.Node> allFingerpintNodes = new ArrayList<>();
+//        List<de.htwberlin.f4.ai.ma.fingerprint.NodeInterface> allFingerpintNodes = new ArrayList<>();
 //
 //        for (int i = 0; i<navigationGraph.getNodes().size(); i++){
-//            de.htwberlin.f4.ai.ma.fingerprint.Node node = new Node();
+//            de.htwberlin.f4.ai.ma.fingerprint.NodeInterface node = new NodeInterface();
 //            node.setId(navigationGraph.getNodes().get(i).getId());
 //            node.setSignalInformationList(navigationGraph.getNodes().get(i).getSignalInformation());
 //            allFingerpintNodes.add(node);

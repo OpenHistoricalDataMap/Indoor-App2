@@ -96,9 +96,9 @@ class DijkstraEdge {
 /**
  * Created by tognitos on 22.01.17.
  *
- * Dijkstra algorithm uses maps the common Node and Edge objects to its own DijkstraVertex and
+ * Dijkstra algorithm uses maps the common NodeInterface and Edge objects to its own DijkstraVertex and
  * DijkstraEdge objects in order to avoid loading the model objects with the algorithm's logic.
- * It is important that methods from the Node and Edge classes (of the Model) are avoided.
+ * It is important that methods from the NodeInterface and Edge classes (of the Model) are avoided.
  * This allows us to change just how the mapping to the Dijkstra's Vertices and Edges work.
  * "Prinzip der lose Kopplung"
  */
@@ -129,7 +129,7 @@ public class DijkstraAlgorithm {
     }
 
     /**
-     * Map the normal Node objects from the Model to the custom Vertex of the Dijkstra Algorithm.
+     * Map the normal NodeInterface objects from the Model to the custom Vertex of the Dijkstra Algorithm.
      * This is done to avoid filling the model objects with logic elements.
      * @param nodes
      * @return
@@ -173,7 +173,7 @@ public class DijkstraAlgorithm {
     public void execute(String sourceNodeId) throws IllegalArgumentException {
         final Node sourceNode = graph.getNode(sourceNodeId);
         if(sourceNode == null){
-            throw new IllegalArgumentException("Source Node Id is invalid! Given was:" + sourceNodeId);
+            throw new IllegalArgumentException("Source NodeInterface Id is invalid! Given was:" + sourceNodeId);
         }
         final DijkstraVertex sourceVertex = new DijkstraVertex(graph.getNode(sourceNodeId));
 

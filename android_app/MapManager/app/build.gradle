@@ -40,5 +40,9 @@ dependencies {
     // for graph management
     compile 'org.danilopianini:gson-extras:0.2.1'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
-    compile project(':guava-19.0')
+    //compile project(':guava-19.0')
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compile group: 'com.google.guava', name: 'guava', version: '19.0'
+
 }

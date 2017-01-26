@@ -24,8 +24,8 @@ public class FingerprintFactory {
         int averageOrder;
         int knnValue;
 
-        List<Node> allExistingNodes;
-        List<Node> measuredNode;
+        List<NodeInterface> allExistingNodes;
+        List<NodeInterface> measuredNode;
 
         @Override
         public void setMovingAverage(boolean average) {
@@ -88,13 +88,13 @@ public class FingerprintFactory {
         }
 
         @Override
-        public void setAllNodes(List<Node> allNodes) {
+        public void setAllNodes(List<NodeInterface> allNodes) {
             this.allExistingNodes = allNodes;
         }
 
 
         @Override
-        public void setActuallyNode(List<Node> measuredNode) {
+        public void setActuallyNode(List<NodeInterface> measuredNode) {
             this.measuredNode = measuredNode;
         }
 
@@ -128,15 +128,15 @@ public class FingerprintFactory {
             }
         }
 
-        private List<MeasuredNode> getActuallyNode(List<Node> nodeList) {
+        private List<MeasuredNode> getActuallyNode(List<NodeInterface> nodeList) {
             List<MeasuredNode> measuredNodeList = new ArrayList<>();
 
             for(int i=0; i<nodeList.size(); i++){
-                List<Node.SignalInformation> signalInformation = nodeList.get(i).getSignalInformation();
-                for(Node.SignalInformation test : signalInformation)
-                    for (Node.SignalStrengthInformation juhu : test.signalStrengthInformationList) {
-                        String macAdress = juhu.macAdress;
-                        int signalStrenght = juhu.signalStrength;
+                List<SignalInformationInterface> signalInformation = nodeList.get(i).getSignalInformationList();
+                for(SignalInformationInterface test : signalInformation)
+                    for (SignalStrengthInformationInterface juhu : test.getSignalStrengthInformationList()) {
+                        String macAdress = juhu.getMacAdress();
+                        int signalStrenght = juhu.getSignalStrength();
                         MeasuredNode measuredNode = new MeasuredNode(macAdress,signalStrenght);
                         measuredNodeList.add(measuredNode);
                     }
@@ -145,15 +145,15 @@ public class FingerprintFactory {
             return measuredNodeList;
         }
 
-        private List<RestructedNode> calculateNewNodeDateSet(List<Node> allExistingNodes) {
+        private List<RestructedNode> calculateNewNodeDateSet(List<NodeInterface> allExistingNodes) {
             List<String> macAdresses = new ArrayList<>();
             int count = 0;
 
             List<RestructedNode> restructedNodes = new ArrayList<>();
             Multimap<String, Integer> multiMap = null;
 
-            for(Node node : allExistingNodes){
-                count = node.getSignalInformation().size();
+            for(NodeInterface node : allExistingNodes){
+                count = node.getSignalInformationList().size();
                 double minValue = (((double)1/(double)3) * (double)count);
                 macAdresses = getMacAdresses(node);
                 multiMap = getMultiMap(node ,macAdresses);
@@ -182,24 +182,24 @@ public class FingerprintFactory {
             return restructedNodes;
         }
 
-        private List<String> getMacAdresses(Node node){
+        private List<String> getMacAdresses(NodeInterface node){
             HashSet<String> macAdresses =new HashSet<String>();
-            for(Node.SignalInformation signal : node.getSignalInformation()){
-                for(Node.SignalStrengthInformation signalStrength : signal.signalStrengthInformationList){
-                    macAdresses.add(signalStrength.macAdress);
+            for(SignalInformationInterface signal : node.getSignalInformationList()){
+                for(SignalStrengthInformationInterface signalStrength : signal.getSignalStrengthInformationList()){
+                    macAdresses.add(signalStrength.getMacAdress());
                 }
             }
             List<String> uniqueList = new ArrayList<String>(macAdresses);
             return uniqueList;
         }
 
-        private Multimap<String, Integer> getMultiMap(Node node, List<String> macAdresses) {
+        private Multimap<String, Integer> getMultiMap(NodeInterface node, List<String> macAdresses) {
             Multimap<String, Integer> multiMap = ArrayListMultimap.create();
-            for(Node.SignalInformation signal : node.getSignalInformation()){
+            for(SignalInformationInterface signal : node.getSignalInformationList()){
                 HashSet<String> actuallyMacAdresses = new HashSet<String>();
-                for(Node.SignalStrengthInformation signalStrength : signal.signalStrengthInformationList){
-                    multiMap.put(signalStrength.macAdress, signalStrength.signalStrength);
-                    actuallyMacAdresses.add(signalStrength.macAdress);
+                for(SignalStrengthInformationInterface signalStrength : signal.getSignalStrengthInformationList()){
+                    multiMap.put(signalStrength.getMacAdress(), signalStrength.getSignalStrength());
+                    actuallyMacAdresses.add(signalStrength.getMacAdress());
                 }
                 for (String checkMacAdress : macAdresses){
                     if(!actuallyMacAdresses.contains(checkMacAdress)){
