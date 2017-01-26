@@ -29,10 +29,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.graph.Node;
+import htw_berlin.de.mapmanager.graph.SignalInformation;
+import htw_berlin.de.mapmanager.graph.SignalStrengthInformation;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
 import htw_berlin.de.mapmanager.persistence.ReadPermissionException;
@@ -59,22 +63,22 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected Integer doInBackground(Integer... params) {
-            List<Node.SignalInformation> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
-            List<Node.SignalInformation> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
+            List<SignalInformationInterface> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
+            List<SignalInformationInterface> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
             Integer count = 0;
             Integer max = 60*params[0];
             for(count = 0; count <max;count++)
             {
                 Date d = new Date();
-                List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
+                List<SignalStrengthInformationInterface> signalStrengthList = new ArrayList<SignalStrengthInformationInterface>();
                 List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
                 for (ScanResult sr : scanResults) {
                     if (sr.SSID.equals("BVG-Wifi")) {
-                        Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
+                        SignalStrengthInformationInterface signalStrengthEntry = new SignalStrengthInformation(sr.BSSID,sr.level);
                         signalStrengthList.add(signalStrengthEntry);
                     }
                 }
-                signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
+                signalList.add(new SignalInformation(d.toString(),signalStrengthList));
                 if(cancelthis)
                 {
                     signalList = backupList;
@@ -192,7 +196,7 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
             throw new IllegalArgumentException("The given poiId is invalid: " + poiId);
         }
 
-        // TODO this operation could run through all the nodes. Consider passing the whole Node
+        // TODO this operation could run through all the nodes. Consider passing the whole NodeInterface
         // TODO look on the internet what would be more performance expensive
         this.parentNode = StartActivity.graph.getNode(poiId);
         setTitle(parentNode.getId()+" Measurement");
@@ -230,20 +234,20 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
     public static void saveIntervallInNode(Node pNode)
     {
-        List<Node.SignalInformation> backupList = pNode.getSignalInformationList();
-        List<Node.SignalInformation> signalList= pNode.getSignalInformationList();
+        List<SignalInformationInterface> backupList = pNode.getSignalInformationList();
+        List<SignalInformationInterface> signalList= pNode.getSignalInformationList();
         for(int i = 0; i < 120;i++)
         {
             Date d = new Date();
-            List<Node.SignalStrengthInformation> signalStrengthList = new ArrayList<Node.SignalStrengthInformation>();
+            List<SignalStrengthInformationInterface> signalStrengthList = new ArrayList<SignalStrengthInformationInterface>();
             List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
             for (ScanResult sr : scanResults) {
                 if (sr.SSID.equals("BVG-Wifi")) {
-                    Node.SignalStrengthInformation signalStrengthEntry = new Node.SignalStrengthInformation(sr.BSSID,sr.level);
+                    SignalStrengthInformationInterface signalStrengthEntry = new SignalStrengthInformation(sr.BSSID,sr.level);
                     signalStrengthList.add(signalStrengthEntry);
                 }
             }
-            signalList.add(new Node.SignalInformation(d.toString(),signalStrengthList));
+            signalList.add(new SignalInformation(d.toString(),signalStrengthList));
             try{
                 Thread.sleep(1000);
             }

@@ -28,7 +28,7 @@ public class DefineEdgeActivity extends AppCompatActivity {
     // TODO remove unused mgr?
     SensorManager mgr;
     Button step,compass;
-// Id of the destination Node
+// Id of the destination NodeInterface
     public static final String POI_ID_DESTINATION="POI_ID_DESTINATION";
     private String parentNodeId;
     private String destinationNodeId;

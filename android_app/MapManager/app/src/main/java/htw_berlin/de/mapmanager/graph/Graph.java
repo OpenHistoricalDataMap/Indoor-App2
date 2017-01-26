@@ -126,9 +126,9 @@ public class Graph {
      * @return true if the node was new
      * <p>
      * /*
-     * public boolean addNode(Node node) {
+     * public boolean addNode(NodeInterface node) {
      * final String nodeId = node.getId();
-     * for (Map.Entry<String, Node> presentNode : nodes) {
+     * for (Map.Entry<String, NodeInterface> presentNode : nodes) {
      * if (presentNode.getId().equals(nodeId)) {
      * // do not add
      * return false;
@@ -157,10 +157,10 @@ public class Graph {
     }
 */
     /*
-    public void removeNode(Node toDelete) {
+    public void removeNode(NodeInterface toDelete) {
         // remove reference from all edges
-        for (Node connectedNode : toDelete.getEdges().keySet()) {
-            //Node connectedNode = this.getNode(connectedId);
+        for (NodeInterface connectedNode : toDelete.getEdges().keySet()) {
+            //NodeInterface connectedNode = this.getNode(connectedId);
             connectedNode.getEdges().remove(toDelete.getId());
         }
         // remove from the list of nodes
@@ -205,8 +205,8 @@ public class Graph {
 
 
     /**
-     * @param nodeId The id of the Node to remove
-     * @return Node The removed Node object
+     * @param nodeId The id of the NodeInterface to remove
+     * @return NodeInterface The removed NodeInterface object
      */
     public Node removeNode(String nodeId) {
         Node v = nodes.remove(nodeId);
@@ -219,7 +219,7 @@ public class Graph {
     }
 
     /**
-     * @return Set<String> The unique ids of the Graph's Node objects
+     * @return Set<String> The unique ids of the Graph's NodeInterface objects
      */
     public Set<String> nodesKeys() {
         return this.nodes.keySet();

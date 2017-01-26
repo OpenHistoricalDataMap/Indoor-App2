@@ -153,7 +153,7 @@ public class ConnectionListAdapter extends ArrayAdapter<Node> implements Compoun
         // define edge button action
         final Intent intent = new Intent(getContext(), DefineEdgeActivity.class);
         intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID,  parentNode.getId());
-        //Give the DefineEdgeActivity the ID of the destination Node
+        //Give the DefineEdgeActivity the ID of the destination NodeInterface
         intent.putExtra(DefineEdgeActivity.POI_ID_DESTINATION, nodeAtPosition.getId());
         viewHolder.defineEdge.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,7 +1,9 @@
 package htw_berlin.de.mapmanager.navi;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +17,11 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
+import de.htwberlin.f4.ai.ma.fingerprint.Fingerprint;
+import de.htwberlin.f4.ai.ma.fingerprint.FingerprintFactory;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.StartActivity;
@@ -35,7 +41,7 @@ public class WhereAmIActivity extends AppCompatActivity {
     private TextView errorMsg;
     private PermissionManager permissionManager;
     private static final String LOG_TAG = "Navigation";
-
+    private Fingerprint fingerprint = FingerprintFactory.getFingerprint();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +70,40 @@ public class WhereAmIActivity extends AppCompatActivity {
         currentPos = (TextView) this.findViewById(R.id.tvWhereAmI_CurrentPos);
         errorMsg = (TextView) this.findViewById(R.id.tvWhereAmI_ErrorMessage);
 
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        boolean movingAverage = sharedPrefs.getBoolean("pref_movingAverage", true);
+        boolean kalmanFilter = sharedPrefs.getBoolean("pref_kalman", false);
+        boolean euclideanDistance = sharedPrefs.getBoolean("pref_euclideanDistance", false);
+        boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
+
+//        List<de.htwberlin.f4.ai.ma.fingerprint.NodeInterface> allFingerpintNodes = new ArrayList<>();
+//
+//        for (int i = 0; i<navigationGraph.getNodes().size(); i++){
+//            de.htwberlin.f4.ai.ma.fingerprint.NodeInterface node = new NodeInterface();
+//            node.setId(navigationGraph.getNodes().get(i).getId());
+//            node.setSignalInformationList(navigationGraph.getNodes().get(i).getSignalInformation());
+//            allFingerpintNodes.add(node);
+//        }
+
+        fingerprint.setMovingAverage(movingAverage);
+        fingerprint.setKalman(kalmanFilter);
+        fingerprint.setEuclideanDistance(euclideanDistance);
+        fingerprint.setKNN(knnAlgorithm);
+
+        fingerprint.setAverageOrder(Integer.parseInt(sharedPrefs.getString("pref_movivngAverageOrder", "3")));
+        //fingerprint.setAllNodes(allFingerpintNodes);
+
         findPos.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 currentNode = getCurrentPosition();
+                //fingerprint.setActuallyNode(actuallyNode);
+                //String actually = fingerprint.getCalculatedPOI();
                 currentPos.setText("You are currently located at: " + currentNode.getId());
+                //currentPos.setText(actually);
             }
         });
         findWay.setOnClickListener(new View.OnClickListener() {

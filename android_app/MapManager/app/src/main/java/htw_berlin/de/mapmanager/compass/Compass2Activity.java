@@ -99,11 +99,11 @@ public class Compass2Activity extends AppCompatActivity {
         Bundle extra=getIntent().getExtras();
         //
 
-        //get the parent Node to store the data
+        //get the parent NodeInterface to store the data
         parentNodeId=extra.getString(MainActivity.EXTRA_MESSAGE_POI_ID);
         parentNode = StartActivity.graph.getNode(parentNodeId);
 
-        //get the destination Node
+        //get the destination NodeInterface
         destinationNodeID=extra.getString(DefineEdgeActivity.POI_ID_DESTINATION);
         destinationNode = StartActivity.graph.getNode(destinationNodeID);
 

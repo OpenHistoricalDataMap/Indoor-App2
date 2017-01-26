@@ -56,7 +56,7 @@ public class PersistenceManager {
                 .excludeFieldsWithoutExposeAnnotation()
                 .serializeNulls();
 
-        // manage circular references in the graph (DijkstraEdge->Node->DijkstraEdge->...)
+        // manage circular references in the graph (DijkstraEdge->NodeInterface->DijkstraEdge->...)
         new GraphAdapterBuilder()
                 // enable if cyclic dependencies make the application crash
                 // (you will probably need to delete the graph.json data)

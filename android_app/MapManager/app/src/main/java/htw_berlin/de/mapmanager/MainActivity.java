@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //dijkstra.execute("node_id_of_current_position");
 
         // pick the path to the destination
-        //LinkedList<Node> path = dijkstra.getPath("node_id_of_destination");
+        //LinkedList<NodeInterface> path = dijkstra.getPath("node_id_of_destination");
         LinkedList<Node> path = dijkstra.getPath("zzz");
 
         if (path == null) {
