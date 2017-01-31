@@ -20,11 +20,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.htwberlin.f4.ai.ma.fingerprint.Fingerprint;
+import de.htwberlin.f4.ai.ma.fingerprint.FingerprintFactory;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
 import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.graph.Node;
+import htw_berlin.de.mapmanager.graph.SignalInformation;
 import htw_berlin.de.mapmanager.graph.SignalStrengthInformation;
 import htw_berlin.de.mapmanager.graph.dijkstra.DijkstraAlgorithm;
 import htw_berlin.de.mapmanager.ui.adapter.DijkstraAdapter;
@@ -39,6 +43,7 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
     private TextView tvDijkstra;
     private DijkstraAdapter adapter;
     private DijkstraAlgorithm dijkstraAlgorithm;
+    private Fingerprint fingerprint = FingerprintFactory.getFingerprint();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,9 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
         dijkstraview.setAdapter(adapter);
         AsyncChecks checks = new AsyncChecks();
         checks.execute(pathlist);
+
+        //hier zufügen?
+        fingerprint.setAllNodes(pathlist);
     }
 
     private class AsyncChecks extends AsyncTask<ArrayList<Node>,Integer,Integer>
@@ -90,9 +98,27 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
             List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
             while(!isFinished){
 
-
                 //CALCULATE CURRENT NODE FROM SCANRESULTS
                 //TODO @zoeddle
+                List<Node> actuallyNodeList = new ArrayList<Node>();
+
+                for (ScanResult sr : scanResults) {
+
+                    if (sr.SSID.equals(ssid)) {
+                        List<SignalInformationInterface> signalInformationList = new ArrayList<>();
+                        List<SignalStrengthInformationInterface> signalStrenghtList = new ArrayList<>();
+                        SignalStrengthInformation signal = new SignalStrengthInformation(sr.BSSID,sr.level);
+                        signalStrenghtList.add(signal);
+                        SignalInformation signalInformation = new SignalInformation("",signalStrenghtList);
+                        signalInformationList.add(signalInformation);
+                        Node node = new Node(null,0,signalInformationList);
+                        actuallyNodeList.add(node);
+                    }
+                }
+                fingerprint.setActuallyNode(actuallyNodeList);
+                String actuallyNode = fingerprint.getCalculatedPOI();
+                currentNode.setId(actuallyNode);
+
 
                 if(currentNode == path.get(path.size()-1))
                 {

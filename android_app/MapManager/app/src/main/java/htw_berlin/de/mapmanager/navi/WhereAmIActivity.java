@@ -101,12 +101,14 @@ public class WhereAmIActivity extends AppCompatActivity {
         fingerprint.setKNN(knnAlgorithm);
 
         fingerprint.setAverageOrder(Integer.parseInt(sharedPrefs.getString("pref_movivngAverageOrder", "3")));
-        fingerprint.setAllNodes(navigationGraph.getNodes());
+        fingerprint.setKNNValue(Integer.parseInt(sharedPrefs.getString("pref_knnNeighbours", "3")));
+        //fingerprint.setAllNodes(navigationGraph.getNodes());
 
         findPos.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                fingerprint.setAllNodes(navigationGraph.getNodes());
                 List<Node> measuredNode = getMeasuredNode();
                 fingerprint.setActuallyNode(measuredNode);
                 String actually = fingerprint.getCalculatedPOI();
@@ -129,7 +131,7 @@ public class WhereAmIActivity extends AppCompatActivity {
                     List<SignalStrengthInformationInterface> signalStrenghtList = new ArrayList<>();
                     SignalStrengthInformation signal = new SignalStrengthInformation(sr.BSSID,sr.level);
                     signalStrenghtList.add(signal);
-                    SignalInformation signalInformation = new SignalInformation("time1",signalStrenghtList);
+                    SignalInformation signalInformation = new SignalInformation("",signalStrenghtList);
                     signalInformationList.add(signalInformation);
                     Node node = new Node(null,0,signalInformationList);
                     actuallyNode.add(node);
