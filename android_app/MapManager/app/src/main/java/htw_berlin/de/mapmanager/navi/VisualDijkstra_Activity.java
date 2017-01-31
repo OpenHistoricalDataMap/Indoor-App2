@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -117,7 +118,13 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
                 }
                 fingerprint.setActuallyNode(actuallyNodeList);
                 String actuallyNode = fingerprint.getCalculatedPOI();
-                currentNode.setId(actuallyNode);
+                int position = -1;
+                position = path.indexOf(actuallyNode);
+                if (position == -1) {
+                    //nicht gefunden
+                } else {
+                    currentNode= path.get(position);
+                }
 
 
                 if(currentNode == path.get(path.size()-1))
