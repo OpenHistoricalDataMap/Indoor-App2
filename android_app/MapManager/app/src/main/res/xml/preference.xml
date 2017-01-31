@@ -29,13 +29,9 @@
             android:title="Euklidische Distanz"
             android:defaultValue="false" />
         <CheckBoxPreference
-            android:key="pref_euclideanDistanceReplace"
-            android:title="Fehlende werte ersetzen"
-            android:defaultValue="true"
-            android:dependency="pref_euclideanDistance"/>
-        <CheckBoxPreference
             android:key="pref_knnAlgorithm"
             android:title="k-nächster-Nachbar Algorithmus"
+            android:dependency="pref_euclideanDistance"
             android:defaultValue="true" />
         <htw_berlin.de.mapmanager.prefs.ui.EditTextPreference
             android:defaultValue="3"

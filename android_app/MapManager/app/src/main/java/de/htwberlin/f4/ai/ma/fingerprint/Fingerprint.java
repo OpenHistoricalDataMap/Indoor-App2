@@ -20,10 +20,10 @@ public interface Fingerprint{
     void setKNNValue(int value);
     int getKNNValue();
 
-    void setAllNodes(List<NodeInterface> allNodes);
+    void setAllNodes(List<?> allNodes);
     //List<NodeInterface> getAllNodes();
 
-    void setActuallyNode(List<NodeInterface> measuredNodes);
+    void setActuallyNode(List<?> measuredNodes);
     //List<NodeInterface> getMeasuredNode();
 
     String getCalculatedPOI();
