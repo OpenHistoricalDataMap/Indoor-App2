@@ -116,6 +116,9 @@ public class WhereAmIActivity extends AppCompatActivity {
                 if(currentNode != null){
                     currentPos.setText("You are currently located at: " + currentNode.getId());
                 }
+                else{
+                    currentPos.setText("Position not found");
+                }
             }
 
             private List<Node> getMeasuredNode() {

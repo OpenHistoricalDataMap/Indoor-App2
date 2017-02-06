@@ -457,23 +457,22 @@ public class FingerprintFactory {
                 return doSelectionSort(distanceClassList);
             }
 
-            private List<String> doSelectionSort(List<DistanceClass> distanceList){
+            private List<String> doSelectionSort(List<DistanceClass> distanceList) {
+                for (int i = 0; i < distanceList.size() - 1; i++) {
+                    for (int j = i + 1; j < distanceList.size(); j++) {
+                        if (distanceList.get(i).distance > distanceList.get(j).distance){
+                            DistanceClass temp = distanceList.get(i);
+                            distanceList.set(i,distanceList.get(j));
+                            distanceList.set(j,temp);
+                        }
+                    }
+                }
 
                 List<String> distanceNameList = new ArrayList<>();
-
-                for (int i = 0; i < distanceList.size() - 1; i++)
-                {
-                    int index = i;
-                    for (int j = i + 1; j < distanceList.size(); j++)
-                        if (distanceList.get(j).distance < distanceList.get(index).distance)
-                            index = j;
-
-                    double smallerNumber = distanceList.get(index).distance;
-                    distanceList.get(index).distance = distanceList.get(i).distance;
-                    distanceList.get(i).distance = smallerNumber;
-
-                    distanceNameList.add(i, distanceList.get(i).name);
+                for(DistanceClass poi : distanceList){
+                    distanceNameList.add(poi.name);
                 }
+
                 return distanceNameList;
             }
 
