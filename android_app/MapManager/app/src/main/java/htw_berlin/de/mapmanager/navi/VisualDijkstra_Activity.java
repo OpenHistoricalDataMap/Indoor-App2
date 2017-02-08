@@ -39,6 +39,57 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
     private TextView tvDijkstra;
     private DijkstraAdapter adapter;
     private DijkstraAlgorithm dijkstraAlgorithm;
+    private AsyncChecks checks;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // just redraw all the views (in particular the images) in case new pictures have been taken
+        // Attention: this does not update the adapter's listModel, it just redraws what is already available!
+        dijkstraview.invalidateViews();
+    }
+
+    @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+        //Refresh your stuff here
+        setContentView(R.layout.activity_visual_dijkstra_);
+
+        Intent intent = getIntent();
+        startNode = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_POI_ID);
+        if(startNode == null || startNode == ""){
+            throw new IllegalArgumentException("The given poiId is invalid: " + startNode);
+        }
+        targetNode = intent.getStringExtra(SelectTarget.TARGET_POI_ID);
+        if(targetNode == null || targetNode == ""){
+            throw new IllegalArgumentException("The given target poId is invalid: "+targetNode);
+        }
+
+        if(targetNode != startNode) {
+            dijkstraAlgorithm = new DijkstraAlgorithm(StartActivity.graph);
+            dijkstraAlgorithm.execute(startNode);
+            LinkedList<Node> path = dijkstraAlgorithm.getPath(targetNode);
+            pathlist = new ArrayList<Node>();
+            for (Node n : path) {
+                pathlist.add(n);
+            }
+        }
+        else{
+            pathlist.add(StartActivity.graph.getNode(startNode));
+        }
+        tvDijkstra = (TextView) findViewById(R.id.textViewDijkstra);
+        textviewString = tvDijkstra.getText();
+        dijkstraview = (ListView) findViewById(R.id.lv_dijkstra);
+        adapter = new DijkstraAdapter(pathlist, this);
+        dijkstraview.setAdapter(adapter);
+        if(targetNode != startNode)
+        {
+            AsyncChecks checks = new AsyncChecks();
+            checks.execute(pathlist);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

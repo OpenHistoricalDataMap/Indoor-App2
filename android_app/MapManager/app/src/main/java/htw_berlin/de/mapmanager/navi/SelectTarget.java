@@ -56,7 +56,8 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Node node = adapter.getItem(position);
-        goToVisualizeDjikstra(node.getId());
+        if(!node.getId().equalsIgnoreCase(startNode))
+            goToVisualizeDjikstra(node.getId());
     }
 
     private void goToVisualizeDjikstra(String targetNodeID)
