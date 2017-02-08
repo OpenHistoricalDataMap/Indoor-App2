@@ -64,6 +64,7 @@ public class SelectTarget extends AppCompatActivity implements AdapterView.OnIte
     {
         this.targetNode = targetNodeID;
         Intent intent = new Intent(this, VisualDijkstra_Activity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.putExtra(MainActivity.EXTRA_MESSAGE_POI_ID, startNode);
         intent.putExtra(SelectTarget.TARGET_POI_ID, targetNode);
         startActivity(intent);
