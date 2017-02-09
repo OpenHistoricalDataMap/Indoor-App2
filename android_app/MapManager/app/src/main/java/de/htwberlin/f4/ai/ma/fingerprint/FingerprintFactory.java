@@ -4,9 +4,11 @@ import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import htw_berlin.de.mapmanager.graph.SignalInformation;
 
@@ -90,14 +92,14 @@ public class FingerprintFactory {
         }
 
         @Override
-        public void setAllNodes(List<NodeInterface> allNodes) {
-            this.allExistingNodes = allNodes;
+        public void setAllNodes(List<?> allNodes) {
+            this.allExistingNodes = (List<NodeInterface>) allNodes;
         }
 
 
         @Override
-        public void setActuallyNode(List<NodeInterface> measuredNode) {
-            this.measuredNode = measuredNode;
+        public void setActuallyNode(List<?> measuredNode) {
+            this.measuredNode = (List<NodeInterface>) measuredNode;
         }
 
         @Override
@@ -120,7 +122,13 @@ public class FingerprintFactory {
                     List<MeasuredNode> actuallyNode = getActuallyNode(measuredNode);
                     EuclideanDistance euclideanDistanceClass = new EuclideanDistance();
                     List<String> distanceNames = euclideanDistanceClass.calculateDistance(calculatedNodeList, actuallyNode);
-                    poi = distanceNames.get(0);
+                    if(knn){
+                        KNN KnnClass = new KNN();
+                        poi = KnnClass.calculateKnn(distanceNames);
+                    }
+                    else {
+                        poi = distanceNames.get(0);
+                    }
                 }
 
                 return poi;
@@ -451,23 +459,22 @@ public class FingerprintFactory {
                 return doSelectionSort(distanceClassList);
             }
 
-            private List<String> doSelectionSort(List<DistanceClass> distanceList){
+            private List<String> doSelectionSort(List<DistanceClass> distanceList) {
+                for (int i = 0; i < distanceList.size() - 1; i++) {
+                    for (int j = i + 1; j < distanceList.size(); j++) {
+                        if (distanceList.get(i).distance > distanceList.get(j).distance){
+                            DistanceClass temp = distanceList.get(i);
+                            distanceList.set(i,distanceList.get(j));
+                            distanceList.set(j,temp);
+                        }
+                    }
+                }
 
                 List<String> distanceNameList = new ArrayList<>();
-
-                for (int i = 0; i < distanceList.size() - 1; i++)
-                {
-                    int index = i;
-                    for (int j = i + 1; j < distanceList.size(); j++)
-                        if (distanceList.get(j).distance < distanceList.get(index).distance)
-                            index = j;
-
-                    double smallerNumber = distanceList.get(index).distance;
-                    distanceList.get(index).distance = distanceList.get(i).distance;
-                    distanceList.get(i).distance = smallerNumber;
-
-                    distanceNameList.add(i, distanceList.get(i).name);
+                for(DistanceClass poi : distanceList){
+                    distanceNameList.add(poi.name);
                 }
+
                 return distanceNameList;
             }
 
@@ -479,7 +486,33 @@ public class FingerprintFactory {
         }
 
         private class KNN{
+            private String calculateKnn(List<String> distanceNames) {
+                int knnValue = getKNNValue();
+                Map<String, Integer> stringsCount = new HashMap<String, Integer>();
 
+                if (distanceNames.size() >= knnValue && knnValue!=0){
+                    for (int i = 0; i<knnValue; i++ ){
+                        if(distanceNames.get(i).length()>0){
+                            //String distanceNameString = distanceNames.get(i).toLowerCase();
+                            Integer count = stringsCount.get(distanceNames.get(i));
+                            if(count == null) count = new Integer(0);
+                            count++;
+                            stringsCount.put(distanceNames.get(i),count);
+                        }
+                    }
+                }
+                Map.Entry<String,Integer> mostRepeated = null;
+                for(Map.Entry<String, Integer> e: stringsCount.entrySet())
+                {
+                    if(mostRepeated == null || mostRepeated.getValue()<e.getValue())
+                        mostRepeated = e;
+                }
+                try {
+                    return mostRepeated.getKey();
+                } catch (NullPointerException e) {
+                    return null;
+                }
+            }
         }
 
     }

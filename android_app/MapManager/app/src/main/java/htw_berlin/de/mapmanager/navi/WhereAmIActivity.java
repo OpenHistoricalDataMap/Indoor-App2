@@ -1,8 +1,12 @@
 package htw_berlin.de.mapmanager.navi;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,14 +26,20 @@ import java.util.List;
 
 import de.htwberlin.f4.ai.ma.fingerprint.Fingerprint;
 import de.htwberlin.f4.ai.ma.fingerprint.FingerprintFactory;
+import de.htwberlin.f4.ai.ma.fingerprint.NodeInterface;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
+import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
 import htw_berlin.de.mapmanager.StartActivity;
 import htw_berlin.de.mapmanager.graph.Graph;
 import htw_berlin.de.mapmanager.graph.Node;
 
+import htw_berlin.de.mapmanager.graph.SignalInformation;
+import htw_berlin.de.mapmanager.graph.SignalStrengthInformation;
 import htw_berlin.de.mapmanager.permissions.PermissionManager;
 import htw_berlin.de.mapmanager.persistence.PersistenceManager;
+import htw_berlin.de.mapmanager.wlan.ThatApp;
 
 /**
  * Activity to Perform a check of your current position
@@ -83,17 +93,8 @@ public class WhereAmIActivity extends AppCompatActivity {
         boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
 
         //TODO: cbos hier anschauen
-        String ssid = sharedPrefs.getString("pref_ssid", "BVG-Wifi");
+        final String ssid = sharedPrefs.getString("pref_ssid", "BVG-Wifi");
         StartActivity.graph.setSsid(ssid);
-
-//        List<de.htwberlin.f4.ai.ma.fingerprint.NodeInterface> allFingerpintNodes = new ArrayList<>();
-//
-//        for (int i = 0; i<navigationGraph.getNodes().size(); i++){
-//            de.htwberlin.f4.ai.ma.fingerprint.NodeInterface node = new NodeInterface();
-//            node.setId(navigationGraph.getNodes().get(i).getId());
-//            node.setSignalInformationList(navigationGraph.getNodes().get(i).getSignalInformation());
-//            allFingerpintNodes.add(node);
-//        }
 
         fingerprint.setMovingAverage(movingAverage);
         fingerprint.setKalman(kalmanFilter);
@@ -101,19 +102,53 @@ public class WhereAmIActivity extends AppCompatActivity {
         fingerprint.setKNN(knnAlgorithm);
 
         fingerprint.setAverageOrder(Integer.parseInt(sharedPrefs.getString("pref_movivngAverageOrder", "3")));
-        //fingerprint.setAllNodes(allFingerpintNodes);
+        fingerprint.setKNNValue(Integer.parseInt(sharedPrefs.getString("pref_knnNeighbours", "3")));
+        //fingerprint.setAllNodes(navigationGraph.getNodes());
 
         findPos.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                currentNode = getCurrentPosition();
-                //fingerprint.setActuallyNode(actuallyNode);
-                //String actually = fingerprint.getCalculatedPOI();
-                currentPos.setText("You are currently located at: " + currentNode.getId());
-                //currentPos.setText(actually);
+                fingerprint.setAllNodes(navigationGraph.getNodes());
+                List<Node> measuredNode = getMeasuredNode();
+                fingerprint.setActuallyNode(measuredNode);
+                String actually = fingerprint.getCalculatedPOI();
+                currentNode = getCurrentPosition(actually);
+                if(currentNode != null){
+                    currentPos.setText("You are currently located at: " + currentNode.getId());
+                }
+                else{
+                    currentPos.setText("Position not found");
+                }
+            }
+
+            private List<Node> getMeasuredNode() {
+                //WifiManager mainWifiObj;
+                //mainWifiObj = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                //List<ScanResult> wifiScanList = mainWifiObj.getScanResults();
+                ThatApp.initThatApp(WhereAmIActivity.this);
+                List<ScanResult> wifiScanList = ThatApp.getThatApp().getWifiManager().getScanResults();
+                List<Node> actuallyNode = new ArrayList<Node>();
+
+
+                List<SignalInformation> signalInformationList = new ArrayList<>();
+            for (ScanResult sr : wifiScanList) {
+
+                if (sr.SSID.equals(ssid)) {
+                    List<SignalStrengthInformation> signalStrenghtList = new ArrayList<>();
+                    SignalStrengthInformation signal = new SignalStrengthInformation(sr.BSSID,sr.level);
+                    signalStrenghtList.add(signal);
+                    SignalInformation signalInformation = new SignalInformation("",signalStrenghtList);
+                    signalInformationList.add(signalInformation);
+                }
+            }
+                Node node = new Node(null,0,signalInformationList);
+                actuallyNode.add(node);
+                return actuallyNode;
             }
         });
+
+
         findWay.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -137,8 +172,9 @@ public class WhereAmIActivity extends AppCompatActivity {
      * Currently just Placeholder
      * @return Returns first node of Graph
      */
-    private Node getCurrentPosition() {
-        return navigationGraph.getNodes().get(0);
+    private Node getCurrentPosition(String nodeName) {
+        return navigationGraph.getNode(nodeName);
+        //return navigationGraph.getNodes().get(0);
     }
 
     private void goToSelectTarget() {
