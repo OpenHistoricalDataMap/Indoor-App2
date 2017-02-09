@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
 import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.MainActivity;
 import htw_berlin.de.mapmanager.R;
@@ -73,18 +72,18 @@ public class WLANMainActivity extends AppCompatActivity implements View.OnClickL
 
         @Override
         protected Integer doInBackground(Integer... params) {
-            List<SignalInformationInterface> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
-            List<SignalInformationInterface> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
+            List<SignalInformation> backupList = WLANMainActivity.this.parentNode.getSignalInformationList();
+            List<SignalInformation> signalList= WLANMainActivity.this.parentNode.getSignalInformationList();
             Integer count = 0;
             Integer max = 60*params[0];
             for(count = 0; count <max;count++)
             {
                 Date d = new Date();
-                List<SignalStrengthInformationInterface> signalStrengthList = new ArrayList<SignalStrengthInformationInterface>();
+                List<SignalStrengthInformation> signalStrengthList = new ArrayList<SignalStrengthInformation>();
                 List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
                 for (ScanResult sr : scanResults) {
                     if (sr.SSID.equals(ssid)) {
-                        SignalStrengthInformationInterface signalStrengthEntry = new SignalStrengthInformation(sr.BSSID,sr.level);
+                        SignalStrengthInformation signalStrengthEntry = new SignalStrengthInformation(sr.BSSID,sr.level);
                         signalStrengthList.add(signalStrengthEntry);
                     }
                 }

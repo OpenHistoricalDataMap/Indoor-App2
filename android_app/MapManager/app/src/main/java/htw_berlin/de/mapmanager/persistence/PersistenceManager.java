@@ -46,7 +46,7 @@ public class PersistenceManager {
     private static final String GRAPH_DUMP_FOLDER = "graph_dump";
     private PermissionManager permissionManager;
 
-    private static final Gson gson;
+    public static final Gson gson;
     // initialize gson
     static {
         // create the builder. This allows us to set multiple settings
@@ -54,6 +54,7 @@ public class PersistenceManager {
                 .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
                 .setPrettyPrinting()
                 .excludeFieldsWithoutExposeAnnotation()
+                //.registerTypeAdapter(SignalInformationInterface.class, new SignalInformationSerializer())
                 .serializeNulls();
 
         // manage circular references in the graph (DijkstraEdge->NodeInterface->DijkstraEdge->...)

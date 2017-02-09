@@ -16,9 +16,9 @@ public class SignalInformation implements SignalInformationInterface {
     String timestamp;
 
     @Expose
-    List<SignalStrengthInformationInterface> signalStrengthInformationList;
+    List<SignalStrengthInformation> signalStrengthInformationList;
 
-    public SignalInformation(String timestamp, List<SignalStrengthInformationInterface> signalStrengthInformationList) {
+    public SignalInformation(String timestamp, List<SignalStrengthInformation> signalStrengthInformationList) {
         this.timestamp = timestamp;
         this.signalStrengthInformationList = signalStrengthInformationList;
     }
@@ -34,12 +34,12 @@ public class SignalInformation implements SignalInformationInterface {
     }
 
     @Override
-    public List<SignalStrengthInformationInterface> getSignalStrengthInformationList() {
+    public List<SignalStrengthInformation> getSignalStrengthInformationList() {
         return this.signalStrengthInformationList;
     }
 
     @Override
-    public void setSignalStrengthInformationList(List<SignalStrengthInformationInterface> signalStrengthInformationList) {
+    public void setSignalStrengthInformationList(List<SignalStrengthInformation> signalStrengthInformationList) {
         this.signalStrengthInformationList = new ArrayList<>(signalStrengthInformationList);
     }
 }

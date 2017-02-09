@@ -7,7 +7,6 @@ import java.util.List;
 
 import de.htwberlin.f4.ai.ma.fingerprint.NodeInterface;
 import de.htwberlin.f4.ai.ma.fingerprint.SignalInformationInterface;
-import de.htwberlin.f4.ai.ma.fingerprint.SignalStrengthInformationInterface;
 import htw_berlin.de.mapmanager.compass.Edge;
 
 /**
@@ -29,24 +28,24 @@ public class Node implements NodeInterface {
     //private ArrayList<WayPoint> way = new ArrayList<>();
 
     @Expose
-    List<SignalInformationInterface> signalInformationList;
+    List<SignalInformation> signalInformationList;
 
 
 
-    public Node(String id, float zValue, List<SignalInformationInterface> signalInformationList, ArrayList<Edge> edges) {
+    public Node(String id, float zValue, List<SignalInformation> signalInformationList, ArrayList<Edge> edges) {
         this.id = id;
         this.zValue = zValue;
         this.signalInformationList = signalInformationList;
         this.edges = edges;
     }
 
-    public Node(String id, float zValue, List<SignalInformationInterface> signalInformationList) {
+    public Node(String id, float zValue, List<SignalInformation> signalInformationList) {
         this(id, zValue, signalInformationList, new ArrayList<Edge>());
     }
 
 
     public Node(String id){
-        this(id, 0, new ArrayList<SignalInformationInterface>());
+        this(id, 0, new ArrayList<SignalInformation>());
     }
 
     public void addEdge(Edge edge){
@@ -117,7 +116,7 @@ public class Node implements NodeInterface {
 
 
     @Override
-    public List<SignalInformationInterface> getSignalInformationList() {
+    public List<SignalInformation> getSignalInformationList() {
         return new ArrayList<>(signalInformationList);
     }
 
@@ -125,7 +124,7 @@ public class Node implements NodeInterface {
      * Set a COPY of the passed List as the new signalInformationList
      * @param signalInformationList
      */
-    public void setSignalInformationList(List<SignalInformationInterface> signalInformationList) {
+    public void setSignalInformationList(List<SignalInformation> signalInformationList) {
         this.signalInformationList = new ArrayList<>(signalInformationList);
     }
 

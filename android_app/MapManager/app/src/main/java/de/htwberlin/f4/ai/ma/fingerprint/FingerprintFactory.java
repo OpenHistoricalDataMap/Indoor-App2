@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import htw_berlin.de.mapmanager.graph.SignalInformation;
+
 public class FingerprintFactory {
 
     public static Fingerprint getFingerprint(){
@@ -132,7 +134,7 @@ public class FingerprintFactory {
             List<MeasuredNode> measuredNodeList = new ArrayList<>();
 
             for(int i=0; i<nodeList.size(); i++){
-                List<SignalInformationInterface> signalInformation = nodeList.get(i).getSignalInformationList();
+                List<SignalInformation> signalInformation = nodeList.get(i).getSignalInformationList();
                 for(SignalInformationInterface test : signalInformation)
                     for (SignalStrengthInformationInterface juhu : test.getSignalStrengthInformationList()) {
                         String macAdress = juhu.getMacAdress();
