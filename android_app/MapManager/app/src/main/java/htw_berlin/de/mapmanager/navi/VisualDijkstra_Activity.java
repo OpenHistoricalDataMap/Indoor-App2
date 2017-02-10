@@ -121,7 +121,8 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             Integer counter = 0;
-            Node currentNode = path.get(0);
+            Node currentNode = null;
+            //Node currentNode = path.get(0);
             List<ScanResult> scanResults = ThatApp.getThatApp().getWifiManager().getScanResults();
 
             while (!isFinished) {
@@ -145,7 +146,11 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
                 fingerprint.setActuallyNode(actuallyNodeList);
                 String actuallyNode = fingerprint.getCalculatedPOI();
                 int position = -1;
-                position = path.indexOf(actuallyNode);
+                for(int i = 0; i<path.size(); i++){
+                    if(path.get(i).getId().equals(actuallyNode)){
+                        position = i;
+                    }
+                }
                 if (position == -1) {
                     //nicht gefunden
                 } else {
@@ -175,6 +180,17 @@ public class VisualDijkstra_Activity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(VisualDijkstra_Activity.this);
+            boolean movingAverage = sharedPrefs.getBoolean("pref_movingAverage", true);
+            boolean kalmanFilter = sharedPrefs.getBoolean("pref_kalman", false);
+            boolean euclideanDistance = sharedPrefs.getBoolean("pref_euclideanDistance", false);
+            boolean knnAlgorithm = sharedPrefs.getBoolean("pref_knnAlgorithm", true);
+            fingerprint.setMovingAverage(movingAverage);
+            fingerprint.setKalman(kalmanFilter);
+            fingerprint.setEuclideanDistance(euclideanDistance);
+            fingerprint.setKNN(knnAlgorithm);
+            fingerprint.setAverageOrder(Integer.parseInt(sharedPrefs.getString("pref_movivngAverageOrder", "3")));
+            fingerprint.setKNNValue(Integer.parseInt(sharedPrefs.getString("pref_knnNeighbours", "3")));
+
             ssid = sharedPrefs.getString("pref_ssid", "BVG-Wifi");
             StartActivity.graph.setSsid(ssid);
             path = VisualDijkstra_Activity.this.pathlist;
